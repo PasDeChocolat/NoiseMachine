@@ -101,8 +101,6 @@
 
     (apply-at (m next-beat) #'player [next-beat])))
 
-;;(stop)
-
 (comment 
   (drum/quick-kick :amp 0.7)
   (drum/haziti-clap :decay 0.05 :amp 0.5)
