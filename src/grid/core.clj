@@ -17,9 +17,10 @@
 (def CW (/ WIDTH NCOLS))
 (def RH (/ HEIGHT NROWS))
 
-(def DEPTH_OFF_THRESH 500)
-(def DEPTH_ON_THRESH 2000)
-(def DEPTH_MAX 5000.0)
+;; (def DEPTH_OFF_THRESH 500)
+;; (def DEPTH_ON_THRESH 2000)
+(def DEPTH_FAR_THRESH 2000.0)
+(def DEPTH_MAX 7000.0)
 
 ;; Dirty, Dirty, STATE
 (def k-col-width (atom 0))
@@ -47,15 +48,22 @@
 ;;  - If sector is commonly used, it could have it's volume degrade
 ;;  with use.
 (defn hit-at [col row depth]
-  (let [freq (qc/map-range col 0 NCOLS 100 800)
-        d (qc/constrain-float depth DEPTH_ON_THRESH DEPTH_MAX)
-        amp (qc/map-range d DEPTH_ON_THRESH DEPTH_MAX 5.8 0.05)
-        amp (qc/constrain-float amp 0.0 0.8)
+  (let [
+        d (qc/map-range depth 0 DEPTH_ON_THRESH 0.0 1000.0)
+        d (qc/constrain-float d 0.0 1000.0)
+        amp (qc/map-range d 0.0 1000.0 5.8 0.05)
+        amp (qc/constrain-float amp 0.0 0.5)
         ;;amp 0.4
-        ;; attack (qc/map-range d DEPTH_ON_THRESH DEPTH_MAX 1.0 0.01)
-        attack 0.001
-        ;; decay (qc/map-range d DEPTH_ON_THRESH DEPTH_MAX 0.001 0.5)
-        decay (qc/map-range d DEPTH_ON_THRESH DEPTH_MAX 10.0 0.1)
+
+        freq (qc/map-range col 0 NCOLS 100.0 800.0)
+        
+        ;; attack (qc/map-range d 0.0 1000.0 1.0 0.01)
+        attack (qc/map-range row 0 NROWS 0.01 0.0001)
+        ;; attack 0.001
+
+        ;; decay 0.1
+        decay (qc/map-range d 0.0 1000.0 0.01 1.0)
+        ;; decay (qc/map-range d 0.0 1000.0 10.0 0.1)
         decay (qc/constrain-float decay 0.1 1.0)
         ]
     (drum/bing :amp amp :freq freq :attack attack :decay decay)))
@@ -75,8 +83,12 @@
     (qc/fill g 255)
     (qc/rect x y (- CW MARGIN) (- RH MARGIN))
     (cond
-     (< depth DEPTH_OFF_THRESH) (turn-off-at col row)
-     (> depth DEPTH_ON_THRESH) (turn-on-at col row depth))))
+     (> depth DEPTH_FAR_THRESH) (turn-off-at col row)
+     (< depth DEPTH_FAR_THRESH) (turn-on-at col row depth))
+    (cond
+     (@grid-state [col row]) (qc/fill 0 255 0 80)
+     :default (qc/fill 255 0 0 80))
+    (qc/rect x y 5 5)))
 
 (defn avg-depth-at
   [col row k-depth-map]
@@ -187,15 +199,12 @@
    (out 0    (* v (clip2 (+ wob (* kick-vol kick) (* snare-vol snare)) 1)))))
 
 (comment
-  (dubstep)
-  )
-
-(comment
   ;;Control the dubstep synth with the following:
   (def d (dubstep))
   (ctl d :wobble 8)
   (ctl d :note 40)
   (ctl d :bpm 250)
+  (ctl d :v 0.2)
   (stop)
   )
 
