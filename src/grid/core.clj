@@ -10,34 +10,73 @@
 (def HEIGHT 480.0)
 ;; (def NCOLS 64)
 ;; (def NROWS 48)
-(def NCOLS 32)
-(def NROWS 24)
+(def NCOLS 16)
+(def NROWS 12)
 
 (def MARGIN 0)
 (def CW (/ WIDTH NCOLS))
 (def RH (/ HEIGHT NROWS))
 
+(def DEPTH_OFF_THRESH 500)
+(def DEPTH_ON_THRESH 2000)
+(def DEPTH_MAX 5000.0)
+
+;; Dirty, Dirty, STATE
 (def k-col-width (atom 0))
 (def k-row-height (atom 0))
+(def grid-state (atom {}))
 
 (defn setup []
   (qc/frame-rate 15)
   (.setMirror (bifocals/kinect) true)
+
+  ;; Remember col/row sizes:
   (swap! k-col-width  (constantly (int (/ (bifocals/depth-width)  NCOLS))))
   (swap! k-row-height (constantly (int (/ (bifocals/depth-height) NROWS))))
 
+  ;; Initialize grid state: true/false = on/off
+  (dorun
+   (for [col (range NCOLS)
+         row (range NROWS)]
+     (swap! grid-state #(assoc % [col row] false))))
+  
   (qc/stroke 20)
   (qc/stroke-weight 1))
 
+;; Ideas:
+;;  - If sector is commonly used, it could have it's volume degrade
+;;  with use.
+(defn hit-at [col row depth]
+  (let [freq (qc/map-range col 0 NCOLS 100 800)
+        d (qc/constrain-float depth DEPTH_ON_THRESH DEPTH_MAX)
+        amp (qc/map-range d DEPTH_ON_THRESH DEPTH_MAX 5.8 0.05)
+        amp (qc/constrain-float amp 0.0 0.8)
+        ;;amp 0.4
+        ;; attack (qc/map-range d DEPTH_ON_THRESH DEPTH_MAX 1.0 0.01)
+        attack 0.001
+        ;; decay (qc/map-range d DEPTH_ON_THRESH DEPTH_MAX 0.001 0.5)
+        decay (qc/map-range d DEPTH_ON_THRESH DEPTH_MAX 10.0 0.1)
+        decay (qc/constrain-float decay 0.1 1.0)
+        ]
+    (drum/bing :amp amp :freq freq :attack attack :decay decay)))
+
+(defn turn-on-at [col row depth]
+  (when-not (@grid-state [col row])
+    (swap! grid-state #(assoc % [col row] true))
+    (hit-at col row depth)))
+
+(defn turn-off-at [col row]
+  (if (@grid-state [col row])
+    (swap! grid-state #(assoc % [col row] false))))
+
 (defn display-at
-  [x y depth]
-  (let [g (qc/map-range depth 0 2048 255 0)]
+  [x y col row depth]
+  (let [g (qc/map-range depth 0 DEPTH_MAX 255 0)]
     (qc/fill g 255)
     (qc/rect x y (- CW MARGIN) (- RH MARGIN))
-    (if (and false
-         (> g 255)
-             (> 0.999999 (rand)))
-      (drum/quick-kick :amp (qc/map-range g 0 255 0 0.6)))))
+    (cond
+     (< depth DEPTH_OFF_THRESH) (turn-off-at col row)
+     (> depth DEPTH_ON_THRESH) (turn-on-at col row depth))))
 
 (defn avg-depth-at
   [col row k-depth-map]
@@ -68,16 +107,26 @@
                  y (* row RH)
                  depth (simple-depth-at col row k-depth-map)
                  ;; depth (avg-depth-at col row k-depth-map)
+                 depth (qc/constrain-float depth 0.0 DEPTH_MAX)
                  ]]
-       (display-at x y depth)))))
+       (display-at x y col row depth)))))
+
+(defn on-close-sketch []
+  (stop))
 
 (defn run-sketch []
   (qc/defsketch grid
     :title "Grid"
     :setup setup
     :draw draw
+    :on-close on-close-sketch
     :size [WIDTH HEIGHT]))
 
+;;(qc/sketch-stop grid)
+;;(qc/sketch-start grid)
+;;(qc/sketch-close grid)
+
+(drum/bing :freq 500)
 
 (def m (metronome 128))
 
@@ -101,6 +150,7 @@
 
     (apply-at (m next-beat) #'player [next-beat])))
 
+;;(player (m))
 ;;(stop)
 
 (comment 
@@ -113,9 +163,6 @@
   (drum/kick3 :amp 0.8)
   (drum/kick4 :amp 0.8)
   )
-
-;;(player (m))
-;;(stop)
 
 
 (defsynth dubstep [bpm 120 wobble 1 note 50 snare-vol 1 kick-vol 1 v 1]
@@ -376,6 +423,7 @@
 
 ;; DUBSTEP POLYNOME/MONOME
 (defonce dub-vol (atom 1))
+(declare dmon)
 
 ;;(stop)
 (definst dubstep-mon [note 40 wob 2 hi-man 0 lo-man 0 sweep-man 0 deci-man 0 tan-man 0 shape 0 sweep-max-freq 3000 hi-man-max 1000 lo-man-max 500 beat-vol 0.5 amp 1 bpm 300]
@@ -415,6 +463,7 @@
         beat (* beat-vol (+ kick snare))
         ]
     (* amp (+ (pan2 snd shape) beat))))
+
 (comment
   (def dmon (dubstep-mon))
   )
