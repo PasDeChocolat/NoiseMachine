@@ -19,7 +19,7 @@
 
 ;; (def DEPTH_OFF_THRESH 500)
 ;; (def DEPTH_ON_THRESH 2000)
-(def DEPTH_FAR_THRESH 2000.0)
+(def DEPTH_FAR_THRESH 1400.0)
 (def DEPTH_MAX 7000.0)
 
 ;; Dirty, Dirty, STATE
@@ -47,18 +47,40 @@
 ;; Ideas:
 ;;  - If sector is commonly used, it could have it's volume degrade
 ;;  with use.
-(defn hit-at [col row depth]
+(defn quick-kick-at [col row depth]
   (let [
-        d (qc/map-range depth 0 DEPTH_ON_THRESH 0.0 1000.0)
+        freq (qc/map-range col 0 (/ NCOLS 2) 100 200)
+        decay (qc/map-range depth 0 DEPTH_MAX 0.001 1.0)
+        attack 0.001
+        ]
+    ;; (drum/quick-kick :freq freq :decay decay :attack attack)
+    (drum/quick-kick)
+    ))
+
+(defn haziti-clap-at [col row depth]
+  (let [
+        freq (qc/map-range col 0 (/ NCOLS 2) 100 1000)
+        decay (qc/map-range depth 0 DEPTH_MAX 0.001 1.0)
+        attack 0.001
+        rq 0.0001
+        ]
+    (drum/haziti-clap :freq freq :decay decay :attack attack :rq rq)))
+
+(defn bing-at [col row depth]
+  (let [
+        d (qc/map-range depth 0 DEPTH_FAR_THRESH 0.0 1000.0)
         d (qc/constrain-float d 0.0 1000.0)
-        amp (qc/map-range d 0.0 1000.0 5.8 0.05)
-        amp (qc/constrain-float amp 0.0 0.5)
-        ;;amp 0.4
+        
+        ;; amp (qc/map-range d 0.0 1000.0 5.8 0.05)
+        amp (qc/map-range row 0 NROWS 0.5 0.01)
+        amp (qc/constrain-float amp 0.0 0.8)
+        ;; amp 0.4
 
         freq (qc/map-range col 0 NCOLS 100.0 800.0)
         
         ;; attack (qc/map-range d 0.0 1000.0 1.0 0.01)
-        attack (qc/map-range row 0 NROWS 0.01 0.0001)
+        ;; attack (qc/map-range row 0 NROWS 0.5 0.0001)
+        attack (qc/map-range row 0 NROWS 0.0001 0.2)
         ;; attack 0.001
 
         ;; decay 0.1
@@ -67,6 +89,12 @@
         decay (qc/constrain-float decay 0.1 1.0)
         ]
     (drum/bing :amp amp :freq freq :attack attack :decay decay)))
+
+(defn hit-at [col row depth]
+  (let [f (cond
+           (< col (/ NCOLS 2)) quick-kick-at
+           :default bing-at)]
+    (apply f [col row depth])))
 
 (defn turn-on-at [col row depth]
   (when-not (@grid-state [col row])
@@ -80,7 +108,7 @@
 (defn display-at
   [x y col row depth]
   (let [g (qc/map-range depth 0 DEPTH_MAX 255 0)]
-    (qc/fill g 255)
+    (qc/fill g 160)
     (qc/rect x y (- CW MARGIN) (- RH MARGIN))
     (cond
      (> depth DEPTH_FAR_THRESH) (turn-off-at col row)
@@ -138,7 +166,7 @@
 ;;(qc/sketch-start grid)
 ;;(qc/sketch-close grid)
 
-(drum/bing :freq 500)
+;;(drum/bing :freq 500)
 
 (def m (metronome 128))
 
