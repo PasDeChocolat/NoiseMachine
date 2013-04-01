@@ -104,6 +104,7 @@
 ;;  with use.
 (defn- hit-at-dispatch [col row depth]
   (cond
+   true :bing
    true :piano
    (< col (/ NCOLS 2)) :piano
    :default :bing))
