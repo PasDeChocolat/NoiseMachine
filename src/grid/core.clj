@@ -4,8 +4,62 @@
             [bifocals.core :as bifocals]
             [overtone.inst.drum :as drum]
             [overtone.inst.piano :as piano]
+            [overtone.inst.sampled-piano :as s-piano]
+            [overtone.samples.piano :as samples-piano]
+            [overtone.studio.inst :as stdinst]
             [overtone.gui.scope :as scope]
             [clojure.core.match :as match]))
+
+(definst v-sampled-piano
+  [note 60 level 1 rate 1 loop? 0
+   attack 0 decay 1 sustain 1 release 0.1 curve -4 gate 1 amp 0.5]
+  (let [buf (index:kr (:id samples-piano/index-buffer) note)
+        env (env-gen (adsr attack decay sustain release level curve)
+                     :gate gate
+                     :action FREE)
+        snd (* env (scaled-play-buf 2 buf :level level :loop loop? :action FREE))]
+    (detect-silence snd 0.005 :action FREE)
+    (* amp snd)))
+
+(definst v-piano [amp 0.5
+                  note 60
+                gate 1
+                vel 100
+                decay 0.8
+                release 0.8
+                hard 0.8
+                velhard 0.8
+                muffle 0.8
+                velmuff 0.8
+                velcurve 0.8
+                stereo 0.2
+                tune 0.5
+                random 0.1
+                stretch 0.1
+                sustain 0.1]
+  (let [snd (mda-piano {:freq (midicps note)
+                        :gate gate
+                        :vel vel
+                        :decay decay
+                        :release release
+                        :hard hard
+                        :velhard velhard
+                        :muffle muffle
+                        :velmuff velmuff
+                        :velcurve velcurve
+                        :stereo stereo
+                        :tune tune
+                        :random random
+                        :stretch stretch
+                        :sustain sustain})]
+    (detect-silence snd 0.005 :action FREE)
+    (* amp snd)))
+
+;;(def piano s-piano/sampled-piano)
+;;(def piano piano/piano)
+;; (def piano v-piano)
+(def piano v-sampled-piano)
+;;(stop)
 
 (def WIDTH 640.0)
 (def HEIGHT 480.0)
@@ -50,6 +104,7 @@
 ;;  with use.
 (defn- hit-at-dispatch [col row depth]
   (cond
+   true :piano
    (< col (/ NCOLS 2)) :piano
    :default :bing))
 
@@ -67,16 +122,21 @@
         ;; piano-key
         progression [:c :d :e :f :g :a :b]
         note-key (keyword (str "c" (- NROWS row)))
+
+        amp (qc/map-range row 0 NROWS 0.8 0.3)
+        curve 0
         ]
     ;; (drum/quick-kick :freq freq :decay decay :attack attack)
     ;; (drum/quick-kick :decay 0.1)
-    ;; (* 0.3 (piano/piano (note :c4)))
-    ;; (at (+ (now) 10) (piano/piano (note :c4)))
-    ;; (at (+ (now) 10) (piano/piano (note note-key)))
+    ;; (* 0.3 (piano (note :c4)))
+    ;; (at (+ (now) 10) (piano (note :c4)))
+    ;; (at (+ (now) 250) (piano :note (note note-key) :amp amp))
+    (at (+ (now) 250) (piano :note (note note-key) :amp amp :curve curve :sustain 0.1 :decay 0.8))
     ))
+;;(stop)
 
-(piano/piano (note :c1))
-(keyword (str "c" "1"))
+;;(piano (note :c1))
+;;(stdinst/inst-volume! piano 0.3)
 
 (defmethod hit-at :clap [col row depth]
   (let [
