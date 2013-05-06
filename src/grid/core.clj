@@ -61,12 +61,19 @@
 (def piano v-sampled-piano)
 ;;(stop)
 
-(def WIDTH 640.0)
-(def HEIGHT 480.0)
+(def GRID_SETS 2)
+(def GRID_SET_WIDTH 640.0)
+(def GRID_SET_HEIGHT 480.0)
+(def WIDTH (* GRID_SETS GRID_SET_WIDTH))
+(def HEIGHT (* GRID_SETS GRID_SET_HEIGHT))
+
+(def GRID_SET_COLS 16)
+(def GRID_SET_ROWS 12)
 ;; (def NCOLS 64)
 ;; (def NROWS 48)
-(def NCOLS 16)
-(def NROWS 12)
+
+(def NCOLS (* GRID_SETS GRID_SET_COLS))
+(def NROWS (* GRID_SETS GRID_SET_ROWS))
 
 (def MARGIN 0)
 (def CW (/ WIDTH NCOLS))
@@ -299,18 +306,26 @@
         n (int (+ kx (* ky (bifocals/depth-width))))]
     (nth k-depth-map n)))
 
+(def tick (atom 0))
+
 (defn draw []
   (bifocals/tick)
-  (let [k-depth-map (.depthMap (bifocals/kinect))]
+  (swap! tick inc)
+  (let [k-depth-map (.depthMap (bifocals/kinect))
+        filter-fn (if (even? @tick)
+                    even?
+                    odd?)]
     (doall
      (for [col (range NCOLS)
            row (range NROWS)
+           :when (and
+                  (filter-fn col)
+                  (filter-fn row))
            :let [x (* col CW)
                  y (* row RH)
                  depth (simple-depth-at col row k-depth-map)
                  ;; depth (avg-depth-at col row k-depth-map)
-                 depth (qc/constrain-float depth 0.0 DEPTH_MAX)
-                 ]]
+                 depth (qc/constrain-float depth 0.0 DEPTH_MAX)]]
        (display-at x y col row depth)))))
 
 (defn on-close-sketch []
