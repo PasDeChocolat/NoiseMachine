@@ -181,104 +181,18 @@
   (if (@grid-state [col row])
     (swap! grid-state #(assoc % [col row] false))))
 
-(defn draw-triangle-tip-at
-  [x y]
-  (let [next-y (+ RH y)]
-    (qc/triangle x y
-                 (+ x CW) next-y
-                 (- x CW) next-y)))
-
-(defn draw-triangle-bottom-at
-  [x y]
-  (qc/triangle (- x CW) y
-               (+ x CW) y
-               x (+ y RH)))
-
-(defn display-grid-element-at
-  ([x y]
-     (qc/rect x y (- CW MARGIN) (- RH MARGIN)))
-  ([x y col row]
-     (cond
-      (and (= 0 (mod col 2)) (= 0 (mod row 2))) (draw-triangle-tip-at x y)
-      (and (= 0 (mod col 2)) (= 1 (mod row 2))) (draw-triangle-bottom-at x y)
-      (and (= 1 (mod col 2)) (= 0 (mod row 2))) (draw-triangle-bottom-at x y)
-      (and (= 1 (mod col 2)) (= 1 (mod row 2))) (draw-triangle-tip-at x y))))
-
-(defn color-scheme-disney-blues
-  [scaled-depth alpha]
-  (cond
-   (> scaled-depth 240) (qc/fill 15 201 242 alpha)
-   (> scaled-depth 220) (qc/fill 13 159 217 alpha)
-   (> scaled-depth 200) (qc/fill 17 124 217 alpha)
-   (> scaled-depth 170) (qc/fill 17 104 217 alpha)
-   :default  (qc/fill 18 60 193 alpha)))
-
-(defn color-scheme-healthy-yogurt
-  [scaled-depth alpha]
-  (cond
-   (> scaled-depth 240) (qc/fill 191 191 176 alpha)
-   (> scaled-depth 220) (qc/fill 239 242 148 alpha)
-   (> scaled-depth 200) (qc/fill 125 166 106 alpha)
-   (> scaled-depth 170) (qc/fill 29 78 89 alpha)
-   :default  (qc/fill 25 38 64 alpha)))
-
-(defn color-scheme-etro-wallpaper6
-  [scaled-depth alpha]
-  (cond
-   ;; (< scaled-depth 10)  (qc/fill 0 255 0 alpha)
-   ;; (> scaled-depth 250) (qc/fill 255 0 0 alpha)
-   (> scaled-depth 240) (qc/fill 242 233 216 alpha)
-   (> scaled-depth 220) (qc/fill 217 209 186 alpha)
-   (> scaled-depth 200) (qc/fill 128 148 166 alpha)
-   (> scaled-depth 170) (qc/fill 76 97 115 alpha)
-   :default  (qc/fill 28 47 64 alpha)))
-
-(defn color-scheme-font-love
-  [scaled-depth alpha]
-  (cond
-   (> scaled-depth 240) (qc/fill 162 105 254 alpha)
-   (> scaled-depth 220) (qc/fill 132 78 233 alpha)
-   (> scaled-depth 200) (qc/fill 101 51 203 alpha)
-   (> scaled-depth 170) (qc/fill 71 24 173 alpha)
-   :default  (qc/fill 42 1 152 alpha)))
-
-(defn color-scheme-emperor-penguin
-  [scaled-depth alpha]
-  (cond
-   (> scaled-depth 240) (qc/fill 254 172 0 alpha)
-   (> scaled-depth 220) (qc/fill 252 216 43 alpha)
-   (> scaled-depth 200) (qc/fill 94 111 106 alpha)
-   (> scaled-depth 170) (qc/fill 28 68 88 alpha)
-   :default  (qc/fill 1 40 64 alpha)))
-
-(defn choose-display-color [depth]
-  
-  (let [g (qc/map-range depth 0 DEPTH_MAX 255 0)
-        alpha 160]
-    ;; (color-scheme-disney-blues g alpha)
-    ;; (color-scheme-healthy-yogurt g alpha)
-    ;; (color-scheme-etro-wallpaper6 g alpha)
-    ;; (color-scheme-font-love g alpha)
-    (color-scheme-emperor-penguin g alpha)
-    ;; (qc/fill g 160)
-    ))
-
 (defn display-at
   [x y col row depth]
-  (choose-display-color depth)
-  ;; (qc/rect x y (- CW MARGIN) (- RH MARGIN))
-  (display-grid-element-at x y)
-  ;; (display-grid-element-at x y col row)
-
-  ;; Draw on/off indicator square:
-  (cond
-   (> depth DEPTH_FAR_THRESH) (turn-off-at col row)
-   (< depth DEPTH_FAR_THRESH) (turn-on-at col row depth))
-  (cond
-   (@grid-state [col row]) (qc/fill 0 255 0 80)
-   :default (qc/fill 255 0 0 80))
-  (qc/rect x y 5 5)
-  )
+  (let [g (qc/map-range depth 0 DEPTH_MAX 255 0)]
+    (qc/fill g 160)
+    (qc/rect x y (- CW MARGIN) (- RH MARGIN))
+    (cond
+     (> depth DEPTH_FAR_THRESH) (turn-off-at col row)
+     (< depth DEPTH_FAR_THRESH) (turn-on-at col row depth))
+    (cond
+     (@grid-state [col row]) (qc/fill 0 255 0 80)
+     :default (qc/fill 255 0 0 80))
+    (qc/rect x y 5 5)))
 
 (defn avg-depth-at
   [col row k-depth-map]
@@ -324,7 +238,6 @@
     :on-close on-close-sketch
     :size [WIDTH HEIGHT]))
 
-;;(run-sketch)
 ;;(qc/sketch-stop grid)
 ;;(qc/sketch-start grid)
 ;;(qc/sketch-close grid)

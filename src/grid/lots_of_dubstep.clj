@@ -413,6 +413,7 @@
         beat (* beat-vol (+ kick snare))
         ]
     (* amp (+ (pan2 snd shape) beat))))
+(declare dmon)
 (comment
   (def dmon (dubstep-mon))
   )
