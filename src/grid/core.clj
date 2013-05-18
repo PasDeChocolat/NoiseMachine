@@ -57,7 +57,7 @@
 
 ;;(def piano s-piano/sampled-piano)
 ;;(def piano piano/piano)
-;; (def piano v-piano)
+(def piano v-piano)
 (def piano v-sampled-piano)
 ;;(stop)
 
@@ -81,7 +81,8 @@
 
 ;; (def DEPTH_OFF_THRESH 500)
 ;; (def DEPTH_ON_THRESH 2000)
-(def DEPTH_FAR_THRESH 1400.0)
+;; (def DEPTH_FAR_THRESH 1400.0)
+(def DEPTH_FAR_THRESH 3500.0)
 (def DEPTH_MAX 7000.0)
 
 ;; Dirty, Dirty, STATE
@@ -113,6 +114,7 @@
   (cond
    true :bing
    true :piano
+   ;; true :bing
    (< col (/ NCOLS 2)) :piano
    :default :bing))
 
@@ -287,18 +289,6 @@
   (qc/rect x y 5 5)
   )
 
-(defn avg-depth-at
-  [col row k-depth-map]
-  (let [step 5
-        all-d (for [kx (range (* col @k-col-width)  (* (inc col) @k-col-width))
-                    ky (range (* row @k-row-height) (* (inc row) @k-row-height))
-                    :when (and (= 0 (mod kx step))
-                               (= 0 (mod ky step)))
-                    :let [n (+ kx (* ky (bifocals/depth-width)))
-                          depth (nth k-depth-map n)]]
-                depth)]
-    (/ (apply + all-d) (count all-d))))
-
 (defn simple-depth-at
   [col row k-depth-map]
   (let [kx (* (+ col 0.5) @k-col-width)
@@ -308,25 +298,40 @@
 
 (def tick (atom 0))
 
+(defn draw-simple
+  [col row k-depth-map]
+  (let [x (* col CW)
+        y (* row RH)
+        depth (simple-depth-at col row k-depth-map)
+        depth (qc/constrain-float depth 0.0 DEPTH_MAX)]
+    (display-at x y col row depth)))
+
 (defn draw []
   (bifocals/tick)
   (swap! tick inc)
-  (let [k-depth-map (.depthMap (bifocals/kinect))
-        filter-fn (if (even? @tick)
-                    even?
-                    odd?)]
+  (let [k-depth-map (.depthMap (bifocals/kinect))]
     (doall
-     (for [col (range NCOLS)
-           row (range NROWS)
-           :when (and
-                  (filter-fn col)
-                  (filter-fn row))
-           :let [x (* col CW)
-                 y (* row RH)
-                 depth (simple-depth-at col row k-depth-map)
-                 ;; depth (avg-depth-at col row k-depth-map)
-                 depth (qc/constrain-float depth 0.0 DEPTH_MAX)]]
-       (display-at x y col row depth)))))
+     (if (even? @tick)
+       (for [col (range NCOLS)
+             row (range NROWS)
+             :when (or
+                    (and
+                     (even? col)
+                     (even? row))
+                    (and
+                     (odd? col)
+                     (odd? row)))]
+         (draw-simple col row k-depth-map))
+       (for [col (range NCOLS)
+             row (range NROWS)
+             :when (or
+                    (and
+                     (odd? col)
+                     (even? row))
+                    (and
+                     (even? col)
+                     (odd? row)))]
+         (draw-simple col row k-depth-map))))))
 
 (defn on-close-sketch []
   (stop))
