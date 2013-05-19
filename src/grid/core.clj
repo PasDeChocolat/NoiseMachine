@@ -17,17 +17,9 @@
     :on-close on-close-sketch
     :size [WIDTH HEIGHT]))
 
-(defn stop-sketch
-  []
-  (qc/sketch-stop grid))
-
-(defn restart-sketch
-  []
-  (qc/sketch-start grid))
-
-(defn close-sketch
-  []
-  (qc/sketch-close grid))
+(defn stop-sketch [] (qc/sketch-stop grid))
+(defn restart-sketch [] (qc/sketch-start grid))
+(defn close-sketch [] (qc/sketch-close grid))
 
 ;;(run-sketch)
 ;;(qc/sketch-stop grid)
