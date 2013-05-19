@@ -58,9 +58,8 @@
 
 (defn choose-display-color [depth]
   
-  (let [g (qc/map-range depth 0 DEPTH_MAX 255 0)
-        alpha 160]
-    (color-schemes/color-scheme-emperor-penguin g alpha)
+  (let [alpha 160]
+    (color-schemes/color-scheme-emperor-penguin depth alpha)
     ;; (qc/fill g 160)
     ))
 
