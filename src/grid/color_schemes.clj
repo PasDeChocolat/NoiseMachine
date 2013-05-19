@@ -43,18 +43,16 @@
 ;; Based on this theme: https://kuler.adobe.com/#themeID/1979738
 (defn color-scheme-emperor-penguin
   [depth alpha]
-  (let [half-far (* 0.5 (- DEPTH_MAX DEPTH_FAR_THRESH))]
+  (let [step-1 (* 0.12 DEPTH_FAR_THRESH)
+        step-2 (* 0.27 DEPTH_FAR_THRESH)
+        step-3 (* 0.43 DEPTH_FAR_THRESH)
+        half-far (* 0.5 (- DEPTH_MAX DEPTH_FAR_THRESH))]
     (cond
-     (< depth 411) (qc/fill 254 172 0 alpha)
-     (< depth 960) (qc/fill 252 216 43 alpha)
-     (< depth 1510) (qc/fill 94 111 106 alpha)
+     (< depth step-1) (qc/fill 254 172 0 alpha)
+     (< depth step-2) (qc/fill 252 216 43 alpha)
+     (< depth step-3) (qc/fill 94 111 106 alpha)
      (< depth DEPTH_FAR_THRESH) (qc/fill 186 198 202 alpha)
      (< depth (+ DEPTH_FAR_THRESH half-far)) (qc/fill 28 68 88 alpha)   
-
-     
-     ;; (< depth 2333) (qc/fill 28 68 88 alpha)
-
-     ;; (< depth DEPTH_FAR_THRESH) (qc/fill 255 0 0 alpha)
      :default (qc/fill 1 40 64 alpha))))
 
 

@@ -23,7 +23,8 @@
 ;; (def DEPTH_OFF_THRESH 500)
 ;; (def DEPTH_ON_THRESH 2000)
 ;; (def DEPTH_FAR_THRESH 1400.0)
-(def DEPTH_FAR_THRESH 3500.0)
+;; (def DEPTH_FAR_THRESH 3500.0) // Museum setting 1
+(def DEPTH_FAR_THRESH 2000.0)
 (def DEPTH_MAX 7000.0)
 
 ;; Dirty, Dirty, STATE
