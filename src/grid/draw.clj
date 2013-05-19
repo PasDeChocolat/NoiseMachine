@@ -3,7 +3,7 @@
             [grid.color-schemes :as color-schemes]
             [overtone.inst.drum :as drum]
             [quil.core :as qc])
-  (:use [grid.setup :only [CW DEPTH_FAR_THRESH DEPTH_MAX MARGIN NROWS NCOLS RH grid-state k-col-width k-row-height]]))
+  (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX MARGIN NROWS NCOLS RH grid-state k-col-width k-row-height]]))
 
 ;; Ideas:
 ;;  - If sector is commonly used, it could have it's volume degrade
@@ -58,22 +58,21 @@
 
 (defn choose-display-color
   [depth]
-  (let [alpha 160]
-    (color-schemes/color-scheme-emperor-penguin depth DEPTH_MAX DEPTH_FAR_THRESH alpha)
+  (let [min-depth 0
+        alpha 160]
+    (color-schemes/color-scheme-emperor-penguin depth min-depth DEPTH_MAX DEPTH_FAR_THRESH alpha)
     ;; (qc/fill g 160)
     ))
 
 (defn display-at
   [x y col row depth]
   (choose-display-color depth)
-  ;; (qc/rect x y (- CW MARGIN) (- RH MARGIN))
   (display-grid-element-at x y)
-  ;; (display-grid-element-at x y col row)
 
   ;; Draw on/off indicator square:
   (cond
-   (> depth DEPTH_FAR_THRESH) (turn-off-at col row)
-   (< depth DEPTH_FAR_THRESH) (turn-on-at col row depth))
+   (and (> depth DEPTH_START_SECOND_LAYER) (< depth DEPTH_FAR_THRESH)) (turn-on-at col row depth)
+   :default (turn-off-at col row))
   (cond
    (@grid-state [col row]) (qc/fill 0 255 0 80)
    :default (qc/fill 255 0 0 80))
