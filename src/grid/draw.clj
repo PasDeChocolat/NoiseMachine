@@ -56,10 +56,10 @@
   [x y]
   (qc/rect x y (- CW MARGIN) (- RH MARGIN)))
 
-(defn choose-display-color [depth]
-  
+(defn choose-display-color
+  [depth]
   (let [alpha 160]
-    (color-schemes/color-scheme-emperor-penguin depth alpha)
+    (color-schemes/color-scheme-emperor-penguin depth DEPTH_MAX DEPTH_FAR_THRESH alpha)
     ;; (qc/fill g 160)
     ))
 
