@@ -20,6 +20,11 @@
 (def CW (/ WIDTH NCOLS))
 (def RH (/ HEIGHT NROWS))
 
+;; Long Columns Layer
+(def NLONGCOLS 4)
+(def LONG_COLS_START_COLS (filter #(= 0 (mod % (int (/ NCOLS NLONGCOLS))))
+                                  (range NCOLS)))
+
 ;; (def DEPTH_FAR_THRESH 3500.0) // Museum setting 1
 (def DEPTH_FAR_THRESH 2000.0)
 (def DEPTH_MAX 7000.0)
