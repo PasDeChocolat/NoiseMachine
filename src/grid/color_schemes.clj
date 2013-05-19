@@ -40,6 +40,7 @@
 ;;    (> scaled-depth 170) (qc/fill 71 24 173 alpha)
 ;;    :default  (qc/fill 42 1 152 alpha)))
 
+;; Based on this theme: https://kuler.adobe.com/#themeID/1979738
 (defn color-scheme-emperor-penguin
   [depth alpha]
   (let [half-far (* 0.5 (- DEPTH_MAX DEPTH_FAR_THRESH))]
@@ -47,7 +48,7 @@
      (< depth 411) (qc/fill 254 172 0 alpha)
      (< depth 960) (qc/fill 252 216 43 alpha)
      (< depth 1510) (qc/fill 94 111 106 alpha)
-     (< depth DEPTH_FAR_THRESH) (qc/fill 172 202 186 alpha)
+     (< depth DEPTH_FAR_THRESH) (qc/fill 186 198 202 alpha)
      (< depth (+ DEPTH_FAR_THRESH half-far)) (qc/fill 28 68 88 alpha)   
 
      
