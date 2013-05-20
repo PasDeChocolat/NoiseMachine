@@ -92,7 +92,9 @@
        (let [grid-depth (simple-depth-at col row k-depth-map)]
          (when (< grid-depth DEPTH_START_SECOND_LAYER)
            (qc/rect (* col @k-col-width) 0
-                    long-width HEIGHT)))))))
+                    long-width HEIGHT)
+           (comment (when (= 0 (mod @tick 5))
+              (dynamic-sound/rhythm-hit-at col row grid-depth)))))))))
 
 (defn draw []
   (bifocals/tick)
@@ -100,9 +102,3 @@
   (let [k-depth-map (.depthMap (bifocals/kinect))]
     (draw-grid-instrument k-depth-map)
     (draw-long-cols k-depth-map)))
-
-
-
-
-
-
