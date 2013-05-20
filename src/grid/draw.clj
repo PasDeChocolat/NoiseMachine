@@ -87,13 +87,15 @@
   (let [start-cols LONG_COLS_START_COLS
         row 1
         long-width (/ WIDTH NLONGCOLS)
-        long-height (* 4 @k-row-height)]
+        ;; long-height (* 4 @k-row-height)
+        long-height HEIGHT
+        ]
     (doall
      (for [col start-cols]
        (let [grid-depth (simple-depth-at col row k-depth-map)]
          (when (< grid-depth DEPTH_START_SECOND_LAYER)
            (qc/fill 255 0 255 50)
-           (qc/rect (* col @k-col-width) @k-row-height
+           (qc/rect (* col CW) RH
                     long-width long-height)
            (when (and (= 0 (mod @tick 10)) (not (@long-col-state col)))
              (swap! long-col-state #(assoc % col true))

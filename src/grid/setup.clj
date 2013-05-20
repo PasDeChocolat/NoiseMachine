@@ -4,13 +4,19 @@
             [overtone.at-at :as at-at]))
 
 (def GRID_SETS 1)
-(def GRID_SET_WIDTH 640.0)
-(def GRID_SET_HEIGHT 480.0)
+;; (def GRID_SET_WIDTH 640.0)
+;; (def GRID_SET_HEIGHT 480.0)
+(def GRID_SET_WIDTH 1024.0)
+(def GRID_SET_HEIGHT 768.0)
+
 (def WIDTH (* GRID_SETS GRID_SET_WIDTH))
 (def HEIGHT (* GRID_SETS GRID_SET_HEIGHT))
 
-(def GRID_SET_COLS 16)
-(def GRID_SET_ROWS 12)
+;; (def GRID_SET_COLS 16)
+;; (def GRID_SET_ROWS 12)
+(def GRID_SET_COLS 24)
+(def GRID_SET_ROWS 18)
+
 ;; (def NCOLS 64)
 ;; (def NROWS 48)
 
@@ -26,10 +32,11 @@
 (def LONG_COLS_START_COLS (filter #(= 0 (mod % (int (/ NCOLS NLONGCOLS))))
                                   (range NCOLS)))
 
-;; (def DEPTH_FAR_THRESH 3500.0) // Museum setting 1
-(def DEPTH_FAR_THRESH 2000.0)
+;; (def DEPTH_FAR_THRESH 3500.0) ;; Museum setting 1
+(def DEPTH_FAR_THRESH 4000.0)  ;; Museum setting 2
+;; (def DEPTH_FAR_THRESH 2000.0)  ;; Kitchen setting
 (def DEPTH_MAX 7000.0)
-(def DEPTH_START_SECOND_LAYER 1000.0)
+(def DEPTH_START_SECOND_LAYER 1500.0)
 
 ;; Dirty, Dirty, STATE
 (def k-col-width (atom 0))
