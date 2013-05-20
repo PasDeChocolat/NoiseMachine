@@ -28,7 +28,7 @@
 ;; (def DEPTH_FAR_THRESH 3500.0) // Museum setting 1
 (def DEPTH_FAR_THRESH 2000.0)
 (def DEPTH_MAX 7000.0)
-(def DEPTH_START_SECOND_LAYER 0.0)
+(def DEPTH_START_SECOND_LAYER 1000.0)
 
 ;; Dirty, Dirty, STATE
 (def k-col-width (atom 0))

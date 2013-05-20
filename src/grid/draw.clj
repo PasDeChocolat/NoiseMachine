@@ -8,7 +8,7 @@
 
 (defn turn-on-at [col row depth]
   (when-not (@grid-state [col row])
-    (swap! grid-state #(assoc % [col row] true))
+    (swap! grid-state #(assoc % [col row] depth))
     (dynamic-sound/hit-at col row depth)))
 
 (defn turn-off-at [col row]
@@ -21,7 +21,7 @@
 
 (defn choose-display-color
   [depth]
-  (let [min-depth 0
+  (let [min-depth DEPTH_START_SECOND_LAYER
         alpha 160]
     (color-schemes/color-scheme-emperor-penguin depth min-depth DEPTH_MAX DEPTH_FAR_THRESH alpha)))
 
@@ -84,14 +84,15 @@
 
 (defn draw-long-cols
   [k-depth-map]
-  (let [start-cols LONG_COLS_START_COLS]
+  (let [start-cols LONG_COLS_START_COLS
+        row 0
+        long-width (/ WIDTH NLONGCOLS)]
     (doall
-     (for [col start-cols
-           :let [row 0
-                 long-width (/ WIDTH NLONGCOLS)]]
-       (when (@grid-state [col row])
-         (qc/rect (* col @k-col-width) (* row @k-row-height)
-                  long-width HEIGHT))))))
+     (for [col start-cols]
+       (let [grid-depth (simple-depth-at col row k-depth-map)]
+         (when (< grid-depth DEPTH_START_SECOND_LAYER)
+           (qc/rect (* col @k-col-width) 0
+                    long-width HEIGHT)))))))
 
 (defn draw []
   (bifocals/tick)
@@ -99,3 +100,9 @@
   (let [k-depth-map (.depthMap (bifocals/kinect))]
     (draw-grid-instrument k-depth-map)
     (draw-long-cols k-depth-map)))
+
+
+
+
+
+
