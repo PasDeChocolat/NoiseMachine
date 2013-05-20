@@ -1,6 +1,7 @@
 (ns grid.setup
   (:require [quil.core :as qc]
-            [bifocals.core :as bifocals]))
+            [bifocals.core :as bifocals]
+            [overtone.at-at :as at-at]))
 
 (def GRID_SETS 1)
 (def GRID_SET_WIDTH 640.0)
@@ -34,6 +35,9 @@
 (def k-col-width (atom 0))
 (def k-row-height (atom 0))
 (def grid-state (atom {}))
+(def long-col-state (atom {}))
+
+(def at-at-pool (at-at/mk-pool))
 
 (defn setup []
   (qc/frame-rate 15)
@@ -48,6 +52,15 @@
    (for [col (range NCOLS)
          row (range NROWS)]
      (swap! grid-state #(assoc % [col row] false))))
+  (dorun
+   (for [col LONG_COLS_START_COLS]
+     (swap! long-col-state #(assoc % col false))))
   
   (qc/stroke 20)
   (qc/stroke-weight 1))
+
+(comment
+  (dorun
+   (for [col LONG_COLS_START_COLS]
+     (swap! long-col-state #(assoc % col false))))
+  )

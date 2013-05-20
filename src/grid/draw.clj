@@ -4,7 +4,7 @@
             [grid.sound :as dynamic-sound]
             [overtone.inst.drum :as drum]
             [quil.core :as qc])
-  (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX HEIGHT LONG_COLS_START_COLS MARGIN NCOLS NLONGCOLS NROWS RH WIDTH grid-state k-col-width k-row-height]]))
+  (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX HEIGHT LONG_COLS_START_COLS MARGIN NCOLS NLONGCOLS NROWS RH WIDTH grid-state k-col-width k-row-height long-col-state]]))
 
 (defn turn-on-at [col row depth]
   (when-not (@grid-state [col row])
@@ -85,16 +85,19 @@
 (defn draw-long-cols
   [k-depth-map]
   (let [start-cols LONG_COLS_START_COLS
-        row 0
-        long-width (/ WIDTH NLONGCOLS)]
+        row 1
+        long-width (/ WIDTH NLONGCOLS)
+        long-height (* 4 @k-row-height)]
     (doall
      (for [col start-cols]
        (let [grid-depth (simple-depth-at col row k-depth-map)]
          (when (< grid-depth DEPTH_START_SECOND_LAYER)
-           (qc/rect (* col @k-col-width) 0
-                    long-width HEIGHT)
-           (comment (when (= 0 (mod @tick 5))
-              (dynamic-sound/rhythm-hit-at col row grid-depth)))))))))
+           (qc/fill 255 0 255 50)
+           (qc/rect (* col @k-col-width) @k-row-height
+                    long-width long-height)
+           (when (and (= 0 (mod @tick 10)) (not (@long-col-state col)))
+             (swap! long-col-state #(assoc % col true))
+             (dynamic-sound/rhythm-hit-at col row grid-depth))))))))
 
 (defn draw []
   (bifocals/tick)
