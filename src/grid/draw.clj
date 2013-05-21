@@ -87,7 +87,6 @@
   (let [start-cols LONG_COLS_START_COLS
         row 1
         long-width (/ WIDTH NLONGCOLS)
-        ;; long-height (* 4 @k-row-height)
         long-height HEIGHT
         ]
     (doall
