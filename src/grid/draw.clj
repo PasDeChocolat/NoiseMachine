@@ -17,7 +17,11 @@
 
 (defn display-grid-element-at
   [x y]
-  (qc/rect x y (- CW MARGIN) (- RH MARGIN)))
+  (qc/push-matrix)
+  (qc/translate x y 0)
+  (qc/box (- CW MARGIN) (- RH MARGIN) 10)
+  ;; (qc/rect x y (- CW MARGIN) (- RH MARGIN))
+  (qc/pop-matrix))
 
 (defn choose-display-color
   [depth]
@@ -37,7 +41,14 @@
   (cond
    (@grid-state [col row]) (qc/fill 0 255 0 80)
    :default (qc/fill 255 0 0 80))
-  (qc/rect x y 5 5)
+  (qc/push-matrix)
+  (qc/push-style)
+  (qc/translate (+ 5 (- x (/ CW 2))) (+ 5 (- y (/ RH 2))) 0)
+  (qc/no-stroke)
+  (qc/box 2)
+  ;; (qc/rect x y 5 5)
+  (qc/pop-style)
+  (qc/pop-matrix)
   )
 
 (defn simple-depth-at
@@ -94,8 +105,12 @@
        (let [grid-depth (simple-depth-at col row k-depth-map)]
          (when (< grid-depth DEPTH_START_SECOND_LAYER)
            (qc/fill 255 0 255 50)
-           (qc/rect (* col CW) RH
-                    long-width long-height)
+           (qc/push-matrix)
+           (qc/translate (* col CW) RH 0)
+           (qc/box long-width long-height 10)
+           ;; (qc/rect (* col CW) RH
+           ;;          long-width long-height)
+           (qc/pop-matrix)
            (when (and (= 0 (mod @tick 10)) (not (@long-col-state col)))
              (swap! long-col-state #(assoc % col true))
              (dynamic-sound/rhythm-hit-at col row grid-depth))))))))
@@ -103,6 +118,35 @@
 (defn draw []
   (bifocals/tick)
   (swap! tick inc)
+
+  ;; Lights!
+  (qc/lights)
+
+  ;; Perspective!
+  (comment (let [fov (/ Math/PI 3.0)
+         camera-z (/ (/ (qc/height) 2.0) (qc/tan (/ fov 2.0)))
+         wh-ratio (/ (qc/width) (qc/height) )]
+     (qc/perspective fov wh-ratio (/ camera-z 2.0) (* camera-z 2.0))))
+
+  ;; Camera!
+  (let [
+        ;; eye-x (/ (qc/width) 2.0)
+        eye-x (qc/mouse-x)
+        eye-y (/ (qc/height) 2.0)
+        ;; eye-z (/ (/ (qc/height) 2.0) (qc/tan (/ Math/PI 6.0)))
+        eye-z (/ (/ (qc/height) 2.0) (qc/tan (/ (* Math/PI 60.0) 360.0)))
+        zoom-factor (qc/map-range (qc/mouse-y) 0 (qc/height) 0 1.0)
+        eye-z (* zoom-factor (* 2.0 eye-z))
+        center-x (/ (qc/width) 2.0)
+        center-y (/ (qc/height) 2.0)
+        center-z 0
+        up-x 0
+        up-y 1
+        up-z 0]
+    (qc/camera eye-x eye-y eye-z center-x center-y center-z up-x up-y up-z))
+  
+  (qc/no-stroke)
+  ;; (qc/background 0 0 0 1)
   (let [k-depth-map (.depthMap (bifocals/kinect))]
     (draw-grid-instrument k-depth-map)
     (draw-long-cols k-depth-map)))

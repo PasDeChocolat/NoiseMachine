@@ -12,6 +12,7 @@
 (defn run-sketch []
   (qc/defsketch grid
     :title "Grid"
+    :renderer :p3d
     :setup dynamic-setup/setup
     :draw dynamic-draw/draw
     :on-close on-close-sketch
