@@ -4,7 +4,8 @@
             [grid.sound :as dynamic-sound]
             [overtone.inst.drum :as drum]
             [quil.core :as qc])
-  (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX HEIGHT LONG_COLS_START_COLS MARGIN NCOLS NLONGCOLS NROWS RH WIDTH grid-state k-col-width k-row-height long-col-state]]))
+  (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX HEIGHT LONG_COLS_START_COLS MARGIN NCOLS NLONGCOLS NROWS RH WIDTH]]
+        [grid.state :only [grid-state k-col-width k-row-height long-col-state]]))
 
 (defn turn-on-at [col row depth]
   (when-not (@grid-state [col row])
@@ -15,25 +16,8 @@
   (if (@grid-state [col row])
     (swap! grid-state #(assoc % [col row] false))))
 
-(defn display-grid-element-at
-  [x y]
-  (qc/push-matrix)
-  (qc/translate x y 0)
-  (qc/box (- CW MARGIN) (- RH MARGIN) 10)
-  ;; (qc/rect x y (- CW MARGIN) (- RH MARGIN))
-  (qc/pop-matrix))
-
-(defn choose-display-color
-  [depth]
-  (let [min-depth DEPTH_START_SECOND_LAYER
-        alpha 160]
-    (color-schemes/color-scheme-emperor-penguin depth min-depth DEPTH_MAX DEPTH_FAR_THRESH alpha)))
-
-(defn display-at
+(defn display-on-off-indicator-at
   [x y col row depth]
-  (choose-display-color depth)
-  (display-grid-element-at x y)
-
   ;; Draw on/off indicator square:
   (cond
    (and (> depth DEPTH_START_SECOND_LAYER) (< depth DEPTH_FAR_THRESH)) (turn-on-at col row depth)
@@ -48,8 +32,38 @@
   (qc/box 2)
   ;; (qc/rect x y 5 5)
   (qc/pop-style)
-  (qc/pop-matrix)
+  (qc/pop-matrix))
+
+(defn display-ghost-column
+  [w h z]
+  (qc/translate 0 0 (* -0.5 z))
+  (qc/fill 100 150)
+  (qc/box w h z)
   )
+
+(defn display-grid-element-at
+  [x y depth]
+  (qc/push-matrix)
+  (let [w (- CW MARGIN)
+        h (- RH MARGIN)
+        z (qc/map-range depth 0 DEPTH_MAX 400 0)]
+    (qc/translate x y z)
+    (qc/box w h 1)
+
+    (cond
+     (> depth 1) (display-ghost-column w h z)
+          )
+    
+    )
+  (qc/pop-matrix))
+
+(defn choose-display-color
+  [depth]
+  (let [min-depth DEPTH_START_SECOND_LAYER
+        alpha 160
+        alpha 255
+        ]
+    (color-schemes/color-scheme-emperor-penguin depth min-depth DEPTH_MAX DEPTH_FAR_THRESH alpha)))
 
 (defn simple-depth-at
   [col row k-depth-map]
@@ -58,17 +72,27 @@
         n (int (+ kx (* ky (bifocals/depth-width))))]
     (nth k-depth-map n)))
 
-(def tick (atom 0))
-
-(defn draw-simple
+(defn display-at
   [col row k-depth-map]
   (let [x (* col CW)
         y (* row RH)
         depth (simple-depth-at col row k-depth-map)
         depth (qc/constrain-float depth 0.0 DEPTH_MAX)]
-    (display-at x y col row depth)))
+    (choose-display-color depth)
+    (display-grid-element-at x y depth)
+
+    (display-on-off-indicator-at x y col row depth)))
+
+(def tick (atom 0))
 
 (defn draw-grid-instrument
+  [k-depth-map]
+  (doall
+   (for [col (range NCOLS)
+         row (range NROWS)]
+     (display-at col row k-depth-map))))
+
+(defn draw-grid-instrumentx
   [k-depth-map]
   (doall
    (if (even? @tick)
@@ -81,7 +105,7 @@
                   (and
                    (odd? col)
                    (odd? row)))]
-       (draw-simple col row k-depth-map))
+       (display-at col row k-depth-map))
      (for [col (range NCOLS)
            row (range NROWS)
            :when (or
@@ -91,7 +115,7 @@
                   (and
                    (even? col)
                    (odd? row)))]
-       (draw-simple col row k-depth-map)))))
+       (display-at col row k-depth-map)))))
 
 (defn draw-long-cols
   [k-depth-map]
@@ -106,7 +130,8 @@
          (when (< grid-depth DEPTH_START_SECOND_LAYER)
            (qc/fill 255 0 255 50)
            (qc/push-matrix)
-           (qc/translate (* col CW) RH 0)
+           (qc/rotate-y qc/QUARTER-PI)
+           (qc/translate (* col CW) RH -200)
            (qc/box long-width long-height 10)
            ;; (qc/rect (* col CW) RH
            ;;          long-width long-height)
@@ -146,7 +171,7 @@
     (qc/camera eye-x eye-y eye-z center-x center-y center-z up-x up-y up-z))
   
   (qc/no-stroke)
-  ;; (qc/background 0 0 0 1)
+  (qc/background 0 0 0 255)
   (let [k-depth-map (.depthMap (bifocals/kinect))]
     (draw-grid-instrument k-depth-map)
     (draw-long-cols k-depth-map)))

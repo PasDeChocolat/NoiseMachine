@@ -1,7 +1,7 @@
 (ns grid.setup
   (:require [quil.core :as qc]
-            [bifocals.core :as bifocals]
-            [overtone.at-at :as at-at]))
+            [bifocals.core :as bifocals])
+  (:use [grid.state :only [grid-state k-col-width k-row-height long-col-state]]))
 
 (def GRID_SETS 1)
 ;; (def GRID_SET_WIDTH 640.0)
@@ -25,7 +25,7 @@
 (def NCOLS (* GRID_SETS GRID_SET_COLS))
 (def NROWS (* GRID_SETS GRID_SET_ROWS))
 
-(def MARGIN 0)
+(def MARGIN 20)
 (def CW (/ WIDTH NCOLS))
 (def RH (/ HEIGHT NROWS))
 
@@ -39,14 +39,6 @@
 ;; (def DEPTH_FAR_THRESH 2000.0)  ;; Kitchen setting
 (def DEPTH_MAX 7000.0)
 (def DEPTH_START_SECOND_LAYER 1500.0)
-
-;; Dirty, Dirty, STATE
-(def k-col-width (atom 0))
-(def k-row-height (atom 0))
-(def grid-state (atom {}))
-(def long-col-state (atom {}))
-
-(def at-at-pool (at-at/mk-pool))
 
 (defn setup []
   (qc/frame-rate 15)
