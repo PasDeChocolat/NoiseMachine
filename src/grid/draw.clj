@@ -78,8 +78,9 @@
         y (* row RH)
         depth (simple-depth-at col row k-depth-map)
         depth (qc/constrain-float depth 0.0 DEPTH_MAX)]
-    (choose-display-color depth)
-    (display-grid-element-at x y depth)
+    (when (> depth 1) 
+      (choose-display-color depth)
+      (display-grid-element-at x y depth))
 
     (display-on-off-indicator-at x y col row depth)))
 
