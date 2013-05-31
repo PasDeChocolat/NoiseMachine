@@ -2,6 +2,7 @@
   (:require [bifocals.core :as bifocals]
             [grid.color-schemes :as color-schemes]
             [grid.draw-sensors :as draw-sensors]
+            [grid.pixies :as pixies]
             [grid.sound :as dynamic-sound]
             [overtone.inst.drum :as drum]
             [quil.core :as qc])
@@ -11,7 +12,8 @@
 (defn turn-on-at [col row depth]
   (when-not (@grid-state [col row])
     (swap! grid-state #(assoc % [col row] depth))
-    (dynamic-sound/hit-at col row depth)))
+    (dynamic-sound/hit-at col row depth)
+    (pixies/add-pixie-at col row)))
 
 (defn turn-off-at [col row]
   (if (@grid-state [col row])
@@ -122,4 +124,4 @@
   (let [k-depth-map (.depthMap (bifocals/kinect))]
     (draw-sensors/draw-sensor-grid)
     (draw-grid-instrument k-depth-map)
-    ))
+    (pixies/draw-all-pixies)))
