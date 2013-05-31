@@ -8,15 +8,20 @@
 (def SENSOR_WIDTH 5.0)
 
 (defn draw-sensor-point
-  [x y]
-  (qc/ellipse x y 2 2))
+  [x y col row]
+  (let [t (* @tick 0.1)
+        n (qc/noise col row t)
+        r (+ 1 (* n 4))]
+    (qc/fill 255 (+ 55 (* 200 n)))
+    (qc/ellipse x y r r)))
 
 (defn update-sensor-point
   [{:keys [x y] :as sensor} [col row] t]
-  (let [new-x (+ (* col CW) (* CW (qc/noise col row t)))
-        new-y (+ (* row RH) (* RH (qc/noise col row (inc t))))]
+  (let [pos (+ col (* NCOLS row))
+        new-x (+ (* col CW) (* CW (qc/noise pos t)))
+        new-y (+ (* row RH) (* RH (qc/noise pos (inc t))))]
     (do
-      (draw-sensor-point new-x new-y)
+      (draw-sensor-point new-x new-y col row)
       (-> sensor
           (assoc-in [:x] new-x)
           (assoc-in [:y] new-y)))))
@@ -36,16 +41,29 @@
         p1 (@grid-sensors (nth k n1))
         p2 (@grid-sensors (nth k n2))
         {x1 :x y1 :y} p1
-        {x2 :x y2 :y} p2]
+        {x2 :x y2 :y} p2
+        m (/ (- y2 y1) (- x2 x1))
+        b (- y1 (* m x1))
+        offset 1000
+        x-left (- offset)
+        y-left (+ (* m x-left) b)
+        x-right (+ WIDTH offset)
+        y-right (+ (* m x-right) b)]
     (qc/stroke 255 50)
     (qc/stroke-weight SENSOR_WIDTH)
-    (qc/line x1 y1 x2 y2)
+    ;; (qc/line x1 y1 x2 y2)
+    (qc/line x-left y-left x-right y-right)
     ))
 
 (defn draw-sensor-lines
   []
-  (draw-sensor-line 1 5)
-  )
+  (let [num-sensors (count (keys @grid-sensors))]
+    (dorun
+     (for [x (range num-sensors)
+           :when (= 0 (mod x 10))
+           :let [y (mod (+ 500 x) num-sensors)]]
+       (draw-sensor-line x y)
+       ))))
 
 (defn draw-sensor-grid
   []
