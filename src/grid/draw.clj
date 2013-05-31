@@ -76,7 +76,8 @@
     (comment (when (> depth 1) 
        (choose-display-color depth)
        (display-grid-element-at x y depth)))
-
+    (draw-sensors/display-sensor-element-at col row depth)
+    
     (display-on-off-indicator-at x y col row depth)))
 
 (defn draw-grid-instrument
@@ -120,5 +121,5 @@
   (qc/background 0 0 0 255)
   (let [k-depth-map (.depthMap (bifocals/kinect))]
     (draw-sensors/draw-sensor-grid)
-    ;; (draw-grid-instrument k-depth-map)
+    (draw-grid-instrument k-depth-map)
     ))

@@ -3,27 +3,11 @@
             [bifocals.core :as bifocals])
   (:use [grid.state :only [grid-sensors grid-state k-col-width k-row-height long-col-state]]))
 
-(def GRID_SETS 1)
-;; (def GRID_SET_WIDTH 640.0)
-;; (def GRID_SET_HEIGHT 480.0)
-;; (def GRID_SET_WIDTH 1024.0)
-;; (def GRID_SET_HEIGHT 768.0)
-(def GRID_SET_WIDTH 1280.0)
-(def GRID_SET_HEIGHT 1024.0)
+(def WIDTH 1280.0)
+(def HEIGHT 1024.0)
 
-(def WIDTH (* GRID_SETS GRID_SET_WIDTH))
-(def HEIGHT (* GRID_SETS GRID_SET_HEIGHT))
-
-;; (def GRID_SET_COLS 16)
-;; (def GRID_SET_ROWS 12)
-(def GRID_SET_COLS 24)
-(def GRID_SET_ROWS 18)
-
-;; (def NCOLS 64)
-;; (def NROWS 48)
-
-(def NCOLS (* GRID_SETS GRID_SET_COLS))
-(def NROWS (* GRID_SETS GRID_SET_ROWS))
+(def NCOLS 24)
+(def NROWS 18)
 
 (def MARGIN 20)
 (def CW (/ WIDTH NCOLS))

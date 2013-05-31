@@ -1,5 +1,6 @@
 (ns grid.draw-sensors
-  (:require [quil.core :as qc])
+  (:require [grid.color-schemes :as color-schemes]
+            [quil.core :as qc])
   (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX HEIGHT LONG_COLS_START_COLS MARGIN NCOLS NLONGCOLS NROWS RH WIDTH]]
         [grid.state :only [grid-sensors tick]]))
 
@@ -12,7 +13,7 @@
   (let [t (* @tick 0.1)
         n (qc/noise col row t)
         r (+ 1 (* n 4))]
-    (qc/fill 255 (+ 55 (* 200 n)))
+    (qc/fill 255 255)
     (qc/ellipse x y r r)))
 
 (defn update-sensor-point
@@ -52,9 +53,7 @@
         y-right (+ (* m x-right) b)]
     (qc/stroke 255 50)
     (qc/stroke-weight SENSOR_LINE_WIDTH)
-    ;; (qc/line x1 y1 x2 y2)
-    (qc/line x-left y-left x-right y-right)
-    ))
+    (qc/line x-left y-left x-right y-right)))
 
 (defn draw-sensor-lines
   []
@@ -69,5 +68,22 @@
 (defn draw-sensor-grid
   []
   (draw-sensor-points)
-  (draw-sensor-lines)
+  ;; (draw-sensor-lines)
   )
+
+(defn display-sensor-element-at
+  [col row depth]
+  ;; (qc/push-matrix)
+  (let [{:keys [x y] :or {x 0 y 0}} (@grid-sensors [col row])
+        ;; w (- CW MARGIN)
+        ;; h (- RH MARGIN)
+        a (qc/map-range depth 0 DEPTH_MAX 255 0)
+        r (qc/map-range depth 0 DEPTH_MAX 10 0)]
+    ;; (qc/translate x y 0)
+    (qc/fill 255 a)
+    ;; (qc/sphere r)
+    (when (< depth DEPTH_FAR_THRESH)
+      (color-schemes/color-scheme-emperor-penguin depth 100)
+      (qc/ellipse x y r r))
+  ;; (qc/pop-matrix)
+  ))
