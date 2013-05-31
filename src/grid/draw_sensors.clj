@@ -17,9 +17,10 @@
 
 (defn update-sensor-point
   [{:keys [x y] :as sensor} [col row] t]
-  (let [pos (+ col (* NCOLS row))
+  (let [t (+ (rand 0.01) t) ;; Make a randomness of points little smoother.
+        pos (+ col (* NCOLS row))
         new-x (+ (* col CW) (* CW (qc/noise pos t)))
-        new-y (+ (* row RH) (* RH (qc/noise pos (inc t))))]
+        new-y (+ (* row RH) (* RH (qc/noise pos (+ 5.2 t))))]
     (do
       (draw-sensor-point new-x new-y col row)
       (-> sensor
@@ -28,7 +29,7 @@
 
 (defn draw-sensor-points
   []
-  (let [t (* 0.02 @tick)]
+  (let [t (* 0.01 @tick)]
     (dorun
      (for [col-row (keys @grid-sensors)
            :let [sensor (@grid-sensors col-row)
