@@ -1,11 +1,12 @@
 (ns grid.draw
   (:require [bifocals.core :as bifocals]
             [grid.color-schemes :as color-schemes]
+            [grid.draw-sensors :as draw-sensors]
             [grid.sound :as dynamic-sound]
             [overtone.inst.drum :as drum]
             [quil.core :as qc])
   (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX HEIGHT LONG_COLS_START_COLS MARGIN NCOLS NLONGCOLS NROWS RH WIDTH]]
-        [grid.state :only [grid-state k-col-width k-row-height long-col-state]]))
+        [grid.state :only [grid-state k-col-width k-row-height tick]]))
 
 (defn turn-on-at [col row depth]
   (when-not (@grid-state [col row])
@@ -38,8 +39,7 @@
   [w h z]
   (qc/translate 0 0 (* -0.5 z))
   (qc/fill 100 150)
-  (qc/box w h z)
-  )
+  (qc/box w h z))
 
 (defn display-grid-element-at
   [x y depth]
@@ -49,12 +49,7 @@
         z (qc/map-range depth 0 DEPTH_MAX 400 0)]
     (qc/translate x y z)
     (qc/box w h 1)
-
-    (cond
-     (> depth 1) (display-ghost-column w h z)
-          )
-    
-    )
+    (display-ghost-column w h z))
   (qc/pop-matrix))
 
 (defn choose-display-color
@@ -78,13 +73,11 @@
         y (* row RH)
         depth (simple-depth-at col row k-depth-map)
         depth (qc/constrain-float depth 0.0 DEPTH_MAX)]
-    (when (> depth 1) 
-      (choose-display-color depth)
-      (display-grid-element-at x y depth))
+    (comment (when (> depth 1) 
+       (choose-display-color depth)
+       (display-grid-element-at x y depth)))
 
     (display-on-off-indicator-at x y col row depth)))
-
-(def tick (atom 0))
 
 (defn draw-grid-instrument
   [k-depth-map]
@@ -92,54 +85,6 @@
    (for [col (range NCOLS)
          row (range NROWS)]
      (display-at col row k-depth-map))))
-
-(defn draw-grid-instrumentx
-  [k-depth-map]
-  (doall
-   (if (even? @tick)
-     (for [col (range NCOLS)
-           row (range NROWS)
-           :when (or
-                  (and
-                   (even? col)
-                   (even? row))
-                  (and
-                   (odd? col)
-                   (odd? row)))]
-       (display-at col row k-depth-map))
-     (for [col (range NCOLS)
-           row (range NROWS)
-           :when (or
-                  (and
-                   (odd? col)
-                   (even? row))
-                  (and
-                   (even? col)
-                   (odd? row)))]
-       (display-at col row k-depth-map)))))
-
-(defn draw-long-cols
-  [k-depth-map]
-  (let [start-cols LONG_COLS_START_COLS
-        row 1
-        long-width (/ WIDTH NLONGCOLS)
-        long-height HEIGHT
-        ]
-    (doall
-     (for [col start-cols]
-       (let [grid-depth (simple-depth-at col row k-depth-map)]
-         (when (< grid-depth DEPTH_START_SECOND_LAYER)
-           (qc/fill 255 0 255 50)
-           (qc/push-matrix)
-           (qc/rotate-y qc/QUARTER-PI)
-           (qc/translate (* col CW) RH -200)
-           (qc/box long-width long-height 10)
-           ;; (qc/rect (* col CW) RH
-           ;;          long-width long-height)
-           (qc/pop-matrix)
-           (when (and (= 0 (mod @tick 10)) (not (@long-col-state col)))
-             (swap! long-col-state #(assoc % col true))
-             (dynamic-sound/rhythm-hit-at col row grid-depth))))))))
 
 (defn draw []
   (bifocals/tick)
@@ -174,5 +119,6 @@
   (qc/no-stroke)
   (qc/background 0 0 0 255)
   (let [k-depth-map (.depthMap (bifocals/kinect))]
-    (draw-grid-instrument k-depth-map)
-    (draw-long-cols k-depth-map)))
+    (draw-sensors/draw-sensor-grid)
+    ;; (draw-grid-instrument k-depth-map)
+    ))

@@ -1,6 +1,5 @@
 (ns grid.core
-  (:use [overtone.live]
-        [grid.setup :only [HEIGHT WIDTH]])
+  (:use [grid.setup :only [HEIGHT WIDTH]])
   (:require [grid.draw :as dynamic-draw]
             [grid.setup :as dynamic-setup]
             [quil.core :as qc]))

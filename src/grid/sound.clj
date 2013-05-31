@@ -1,9 +1,11 @@
 (ns grid.sound
+  (:use [grid.setup :only [DEPTH_FAR_THRESH LONG_COLS_START_COLS NCOLS NROWS]]
+        [grid.state :only [at-at-pool long-col-state]]
+        [overtone.live])
   (:require [overtone.inst.drum :as drum]
             [overtone.at-at :as at]
-            [quil.core :as qc])
-  (:use [grid.setup :only [DEPTH_FAR_THRESH LONG_COLS_START_COLS NCOLS NROWS]]
-        [grid.state :only [at-at-pool long-col-state]]))
+            [quil.core :as qc]))
+
 ;;
 ;; Ideas:
 ;;  - If sector is commonly used, it could have it's volume degrade

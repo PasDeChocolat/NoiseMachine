@@ -1,7 +1,7 @@
 (ns grid.setup
   (:require [quil.core :as qc]
             [bifocals.core :as bifocals])
-  (:use [grid.state :only [grid-state k-col-width k-row-height long-col-state]]))
+  (:use [grid.state :only [grid-sensors grid-state k-col-width k-row-height long-col-state]]))
 
 (def GRID_SETS 1)
 ;; (def GRID_SET_WIDTH 640.0)
@@ -56,12 +56,15 @@
   (dorun
    (for [col LONG_COLS_START_COLS]
      (swap! long-col-state #(assoc % col false))))
-  
+
+  ;; Initialize grid sensor state:
+  (dorun
+   (for [col (range NCOLS)
+         row (range NROWS)
+         :let [x (+ (* col CW) (rand-int CW))
+               y (+ (* row RH) (rand-int RH))]]
+     (swap! grid-sensors #(assoc % [col row] {:x x :y y}))))
+
+  (qc/smooth)
   (qc/stroke 20)
   (qc/stroke-weight 1))
-
-(comment
-  (dorun
-   (for [col LONG_COLS_START_COLS]
-     (swap! long-col-state #(assoc % col false))))
-  )
