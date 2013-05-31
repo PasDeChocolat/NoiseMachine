@@ -5,7 +5,7 @@
 
 ;; remove unused things from "use"
 
-(def SENSOR_WIDTH 5.0)
+(def SENSOR_LINE_WIDTH 5.0)
 
 (defn draw-sensor-point
   [x y col row]
@@ -51,7 +51,7 @@
         x-right (+ WIDTH offset)
         y-right (+ (* m x-right) b)]
     (qc/stroke 255 50)
-    (qc/stroke-weight SENSOR_WIDTH)
+    (qc/stroke-weight SENSOR_LINE_WIDTH)
     ;; (qc/line x1 y1 x2 y2)
     (qc/line x-left y-left x-right y-right)
     ))
@@ -69,4 +69,5 @@
 (defn draw-sensor-grid
   []
   (draw-sensor-points)
-  (draw-sensor-lines))
+  (draw-sensor-lines)
+  )
