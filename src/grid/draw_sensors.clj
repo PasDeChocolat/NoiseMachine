@@ -73,17 +73,10 @@
 
 (defn display-sensor-element-at
   [col row depth]
-  ;; (qc/push-matrix)
   (let [{:keys [x y] :or {x 0 y 0}} (@grid-sensors [col row])
-        ;; w (- CW MARGIN)
-        ;; h (- RH MARGIN)
         a (qc/map-range depth 0 DEPTH_MAX 255 0)
         r (qc/map-range depth 0 DEPTH_MAX 10 0)]
-    ;; (qc/translate x y 0)
     (qc/fill 255 a)
-    ;; (qc/sphere r)
     (when (< depth DEPTH_FAR_THRESH)
       (color-schemes/color-scheme-emperor-penguin depth 100)
-      (qc/ellipse x y r r))
-  ;; (qc/pop-matrix)
-  ))
+      (qc/ellipse x y r r))))

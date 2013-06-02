@@ -4,10 +4,12 @@
 (def TRAVEL_DIST 100)
 (def MAX_THINGS 12)
 (def MAX_HEIGHT 40)
+(def MAX_VEL 5)
 
 (defn create-thing
   []
-  {:x 0 :y 0 :height (+ 10 (rand MAX_HEIGHT)) :velocity [(- 1.2 (rand 2.4)) (- 1.2 (rand 2.4))]})
+  {:x 0 :y 0 :height (+ 10 (rand MAX_HEIGHT)) :velocity [(- (/ MAX_VEL 2.0) (rand MAX_VEL))
+                                                         (- (/ MAX_VEL 2.0) (rand MAX_VEL))]})
 
 (defn init-things
   []

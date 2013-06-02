@@ -3,7 +3,7 @@
   (:require [grid.draw-pixie :as draw-pixie]
             [quil.core :as qc]))
 
-(def MAX_HEALTH 200)
+(def MAX_HEALTH 20)
 (def PIXIE_TYPES [:plus])
 
 (defn create-pixie-at-coords
