@@ -20,7 +20,7 @@
   [{:keys [x y] :as sensor} [col row] t]
   (let [t (+ (rand 0.01) t) ;; Make a randomness of points little smoother.
         pos (+ col (* NCOLS row))
-        new-x (+ (* col CW) (* CW (qc/noise pos t)))
+        new-x (+ (* (- NCOLS col 1) CW) (* CW (qc/noise pos t)))
         new-y (+ (* row RH) (* RH (qc/noise pos (+ 5.2 t))))]
     (do
       (draw-sensor-point new-x new-y col row)

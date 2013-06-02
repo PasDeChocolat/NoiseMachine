@@ -71,15 +71,15 @@
 
 (defn display-at
   [col row k-depth-map]
-  (let [x (* col CW)
+  (let [x (* (- NCOLS col 1) CW)
         y (* row RH)
         depth (simple-depth-at col row k-depth-map)
         depth (qc/constrain-float depth 0.0 DEPTH_MAX)]
     (comment (when (> depth 1) 
        (choose-display-color depth)
        (display-grid-element-at x y depth)))
-    (draw-sensors/display-sensor-element-at col row depth)
     
+    (draw-sensors/display-sensor-element-at col row depth)  
     (display-on-off-indicator-at x y col row depth)))
 
 (defn draw-grid-instrument
