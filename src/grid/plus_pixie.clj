@@ -1,10 +1,10 @@
 (ns grid.plus-pixie
   (:require [quil.core :as qc]))
 
-(def TRAVEL_DIST 100)
+(def TRAVEL_DIST 400)
 (def MAX_THINGS 12)
 (def MAX_HEIGHT 40)
-(def MAX_VEL 5)
+(def MAX_VEL 20)
 
 (defn create-thing
   []
