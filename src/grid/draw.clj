@@ -61,9 +61,7 @@
                         (cond (false? on-off) 0
                               :else 1))
         total-on (reduce #(+ %1 (on-1-off-0 %2)) 0 (vals @grid-state))
-        pct-on (/ (float total-on) (* (float NCOLS) (float NROWS)))
-        _ (when (= 0 (mod @tick 30)) (println "pct-on: " pct-on))
-        ]
+        pct-on (/ (float total-on) (* (float NCOLS) (float NROWS)))]
    (doall
     (for [col (range NCOLS)
           row (range NROWS)]

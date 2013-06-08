@@ -20,8 +20,7 @@
         nvel (math-vector/normalize rvel)
         [vel-x vel-y] (->> nvel
                            (math-vector/multiply (* d MAX_VEL))
-                           (mapv #(+ % (rand (* 0.3 MAX_VEL)))))
-        ]
+                           (mapv #(+ % (rand (* 0.3 MAX_VEL)))))]
     {:x 0 :y 0 :height (+ 10 (rand MAX_HEIGHT)) :velocity [vel-x vel-y]}))
 
 (defn init-things
