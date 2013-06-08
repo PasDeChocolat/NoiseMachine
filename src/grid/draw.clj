@@ -33,34 +33,8 @@
   (qc/translate (+ 5 (- x (/ CW 2))) (+ 5 (- y (/ RH 2))) 0)
   (qc/no-stroke)
   (qc/box 2)
-  ;; (qc/rect x y 5 5)
   (qc/pop-style)
   (qc/pop-matrix))
-
-(defn display-ghost-column
-  [w h z]
-  (qc/translate 0 0 (* -0.5 z))
-  (qc/fill 100 150)
-  (qc/box w h z))
-
-(defn display-grid-element-at
-  [x y depth]
-  (qc/push-matrix)
-  (let [w (- CW MARGIN)
-        h (- RH MARGIN)
-        z (qc/map-range depth 0 DEPTH_MAX 400 0)]
-    (qc/translate x y z)
-    (qc/box w h 1)
-    (display-ghost-column w h z))
-  (qc/pop-matrix))
-
-(defn choose-display-color
-  [depth]
-  (let [min-depth DEPTH_START_SECOND_LAYER
-        alpha 160
-        alpha 255
-        ]
-    (color-schemes/color-scheme-emperor-penguin depth min-depth DEPTH_MAX DEPTH_FAR_THRESH alpha)))
 
 (defn simple-depth-at
   [col row k-depth-map]
@@ -69,25 +43,31 @@
         n (int (+ kx (* ky (bifocals/depth-width))))]
     (nth k-depth-map n)))
 
+;; Draw a single grid of the instrument
 (defn display-at
-  [col row k-depth-map]
+  [col row k-depth-map pct-on]
   (let [x (* (- NCOLS col 1) CW)
         y (* row RH)
         depth (simple-depth-at col row k-depth-map)
         depth (qc/constrain-float depth 0.0 DEPTH_MAX)]
-    (comment (when (> depth 1) 
-       (choose-display-color depth)
-       (display-grid-element-at x y depth)))
     
-    (draw-sensors/display-sensor-element-at col row depth)  
+    (draw-sensors/display-sensor-element-at col row depth pct-on)
     (display-on-off-indicator-at x y col row depth)))
 
+;; Draw an instrument
 (defn draw-grid-instrument
   [k-depth-map]
-  (doall
-   (for [col (range NCOLS)
-         row (range NROWS)]
-     (display-at col row k-depth-map))))
+  (let [on-1-off-0 (fn [on-off]
+                        (cond (false? on-off) 0
+                              :else 1))
+        total-on (reduce #(+ %1 (on-1-off-0 %2)) 0 (vals @grid-state))
+        pct-on (/ (float total-on) (* (float NCOLS) (float NROWS)))
+        _ (when (= 0 (mod @tick 30)) (println "pct-on: " pct-on))
+        ]
+   (doall
+    (for [col (range NCOLS)
+          row (range NROWS)]
+      (display-at col row k-depth-map pct-on)))))
 
 (defn draw []
   (bifocals/tick)
@@ -118,8 +98,7 @@
         up-y 1
         up-z 0]
     (qc/camera eye-x eye-y eye-z center-x center-y center-z up-x up-y up-z))
-  
-  (qc/no-stroke)
+    (qc/no-stroke)
   (qc/background 0 0 0 255)
   (let [k-depth-map (.depthMap (bifocals/kinect))]
     (draw-sensors/draw-sensor-grid)

@@ -18,11 +18,14 @@
 (def LONG_COLS_START_COLS (filter #(= 0 (mod % (int (/ NCOLS NLONGCOLS))))
                                   (range NCOLS)))
 
-;; (def DEPTH_FAR_THRESH 3500.0) ;; Museum setting 1
-(def DEPTH_FAR_THRESH 4000.0)  ;; Museum setting 2
-;; (def DEPTH_FAR_THRESH 2000.0)  ;; Kitchen setting
+;; (def DEPTH_FAR_THRESH 4000.0)         ;; Museum setting 2
+;; (def DEPTH_START_SECOND_LAYER 1500.0) ;;
+
+(def DEPTH_FAR_THRESH 4000.0) ;; Kitchen setting
+
+;; (def DEPTH_FAR_THRESH 2000.0) ;; Kitchen setting
+(def DEPTH_START_SECOND_LAYER (/ DEPTH_FAR_THRESH 2.0))
 (def DEPTH_MAX 7000.0)
-(def DEPTH_START_SECOND_LAYER 1500.0)
 
 (defn setup []
   (qc/frame-rate 15)

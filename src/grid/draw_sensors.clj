@@ -1,12 +1,8 @@
 (ns grid.draw-sensors
   (:require [grid.color-schemes :as color-schemes]
             [quil.core :as qc])
-  (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX HEIGHT LONG_COLS_START_COLS MARGIN NCOLS NLONGCOLS NROWS RH WIDTH]]
+  (:use [grid.setup :only [CW DEPTH_FAR_THRESH DEPTH_START_SECOND_LAYER DEPTH_MAX NCOLS RH]]
         [grid.state :only [grid-sensors tick]]))
-
-;; remove unused things from "use"
-
-(def SENSOR_LINE_WIDTH 5.0)
 
 (defn draw-sensor-point
   [x y col row]
@@ -37,46 +33,21 @@
                  updated (update-sensor-point sensor col-row t)]]
        (swap! grid-sensors #(assoc-in % [col-row] updated))))))
 
-(defn draw-sensor-line
-  [n1 n2]
-  (let [k (keys @grid-sensors)
-        p1 (@grid-sensors (nth k n1))
-        p2 (@grid-sensors (nth k n2))
-        {x1 :x y1 :y} p1
-        {x2 :x y2 :y} p2
-        m (/ (- y2 y1) (- x2 x1))
-        b (- y1 (* m x1))
-        offset 1000
-        x-left (- offset)
-        y-left (+ (* m x-left) b)
-        x-right (+ WIDTH offset)
-        y-right (+ (* m x-right) b)]
-    (qc/stroke 255 50)
-    (qc/stroke-weight SENSOR_LINE_WIDTH)
-    (qc/line x-left y-left x-right y-right)))
-
-(defn draw-sensor-lines
-  []
-  (let [num-sensors (count (keys @grid-sensors))]
-    (dorun
-     (for [x (range num-sensors)
-           :when (= 0 (mod x 10))
-           :let [y (mod (+ 500 x) num-sensors)]]
-       (draw-sensor-line x y)
-       ))))
-
 (defn draw-sensor-grid
   []
-  (draw-sensor-points)
-  ;; (draw-sensor-lines)
-  )
+  (draw-sensor-points))
 
 (defn display-sensor-element-at
-  [col row depth]
+  [col row depth pct-on]
   (let [{:keys [x y] :or {x 0 y 0}} (@grid-sensors [col row])
-        a (qc/map-range depth 0 DEPTH_MAX 255 0)
-        r (qc/map-range depth 0 DEPTH_MAX 10 0)]
-    (qc/fill 255 a)
-    (when (< depth DEPTH_FAR_THRESH)
-      (color-schemes/color-scheme-emperor-penguin depth 100)
-      (qc/ellipse x y r r))))
+        r (qc/map-range depth 0 DEPTH_MAX 10 20)]
+    (when (and (> depth DEPTH_START_SECOND_LAYER) (< depth DEPTH_FAR_THRESH))
+      (qc/push-style)
+      (qc/color-mode :hsb 360.0 1.0 1.0 1.0)
+      (let [hue 276.0
+            sat (qc/map-range pct-on 0.0 1.0 1.0 0.0)
+            val (qc/map-range pct-on 0.0 1.0 0.4 1.0)
+            alpha 1.0]
+        (qc/fill hue sat val alpha))
+      (qc/ellipse x y r r)
+      (qc/pop-style))))
