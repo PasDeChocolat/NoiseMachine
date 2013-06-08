@@ -24,15 +24,12 @@
   [pixie]
   (update-in pixie [:health] dec))
 
-(defn update-draw-pixies
-  [pixies]
-  (mapv update-pixie
-        (mapv draw-pixie/draw-pixie pixies)))
-
 (defn draw-all-pixies
   []
-  (let [pixies (doall (update-draw-pixies @all-pixies)) ]
-    (reset! all-pixies (clean-dead pixies))))
+  (reset! all-pixies (->> @all-pixies
+                          (mapv draw-pixie/draw-pixie)
+                          (mapv update-pixie)
+                          (clean-dead))))
 
 (defn add-pixie-at
   [col row]
