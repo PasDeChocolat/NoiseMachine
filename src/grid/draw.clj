@@ -13,7 +13,7 @@
   (when-not (@grid-state [col row])
     (swap! grid-state #(assoc % [col row] depth))
     (dynamic-sound/hit-at col row depth)
-    (pixies/add-pixie-at col row)))
+    (pixies/add-pixie-at col row depth)))
 
 (defn turn-off-at [col row]
   (if (@grid-state [col row])

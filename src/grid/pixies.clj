@@ -1,5 +1,6 @@
 (ns grid.pixies
-  (:use [grid.state :only [all-pixies grid-sensors]])
+  (:use [grid.setup :only [DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH]]
+        [grid.state :only [all-pixies grid-sensors]])
   (:require [grid.draw-pixie :as draw-pixie]
             [quil.core :as qc]))
 
@@ -7,9 +8,11 @@
 (def PIXIE_TYPES [:plus])
 
 (defn create-pixie-at-coords
-  [x y]
-  (let [health (rand MAX_HEALTH)]
+  [x y depth]
+  (let [d (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 0.1 1.0)
+        health (rand (* d MAX_HEALTH))]
     {:x x :y y
+     :depth depth
      :type (nth PIXIE_TYPES (rand-int (count PIXIE_TYPES)))
      :health health
      :initial-state { :health health }
@@ -32,7 +35,7 @@
                           (clean-dead))))
 
 (defn add-pixie-at
-  [col row]
+  [col row depth]
   (let [{:keys [x y]} (@grid-sensors [col row])
-        new-pixie (create-pixie-at-coords x y)]
+        new-pixie (create-pixie-at-coords x y depth)]
     (swap! all-pixies #(conj % new-pixie))))
