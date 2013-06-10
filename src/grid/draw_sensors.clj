@@ -43,7 +43,7 @@
         r (qc/map-range depth 0 DEPTH_MAX 10 20)]
     (when (and (> depth DEPTH_START_SECOND_LAYER) (< depth DEPTH_FAR_THRESH))
       (qc/push-style)
-      (qc/color-mode :hsb 360.0 1.0 1.0 1.0)
+      (qc/color-mode :hsb 0.0 1.0 1.0 1.0)
       (let [hue 276.0
             sat (qc/map-range pct-on 0.0 1.0 1.0 0.0)
             val (qc/map-range pct-on 0.0 1.0 0.4 1.0)

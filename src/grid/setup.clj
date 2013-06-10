@@ -3,11 +3,14 @@
             [bifocals.core :as bifocals])
   (:use [grid.state :only [grid-sensors grid-state k-col-width k-row-height long-col-state]]))
 
-(def WIDTH 1280.0)
-(def HEIGHT 1024.0)
+(def WIDTH 1400.0)
+(def HEIGHT 1000.0)
 
 (def NCOLS 24)
 (def NROWS 18)
+;;(def NCOLS 48)
+;;(def NROWS 36)
+
 
 (def MARGIN 20)
 (def CW (/ WIDTH NCOLS))
@@ -24,7 +27,8 @@
 (def DEPTH_FAR_THRESH 4000.0) ;; Kitchen setting
 
 ;; (def DEPTH_FAR_THRESH 2000.0) ;; Kitchen setting
-(def DEPTH_START_SECOND_LAYER (/ DEPTH_FAR_THRESH 2.0))
+;;(def DEPTH_START_SECOND_LAYER (/ DEPTH_FAR_THRESH 2.0))
+(def DEPTH_START_SECOND_LAYER 1000)
 (def DEPTH_MAX 7000.0)
 
 (defn setup []

@@ -3,7 +3,7 @@
   (:require [grid.math.vector :as math-vector]
             [quil.core :as qc]))
 
-(def MAX_THINGS 12)
+(def MAX_THINGS 40)
 (def MAX_HEIGHT 40)
 (def MAX_VEL 10)
 
