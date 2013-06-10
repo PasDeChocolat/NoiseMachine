@@ -6,7 +6,7 @@
             [grid.sound :as dynamic-sound]
             [overtone.inst.drum :as drum]
             [quil.core :as qc])
-  (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX HEIGHT LONG_COLS_START_COLS MARGIN NCOLS NLONGCOLS NROWS RH WIDTH]]
+  (:use [grid.setup :only [CW DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH DEPTH_MAX HEIGHT MARGIN NCOLS NROWS RH WIDTH]]
         [grid.state :only [grid-state k-col-width k-row-height tick]]))
 
 (defn turn-on-at [col row depth]
@@ -20,7 +20,7 @@
     (swap! grid-state #(assoc % [col row] false))))
 
 (defn display-on-off-indicator-at
-  [x y col row depth]
+  [col row depth]
   ;; Draw on/off indicator square:
   (cond
    (and (> depth DEPTH_START_SECOND_LAYER) (< depth DEPTH_FAR_THRESH)) (turn-on-at col row depth)
@@ -30,7 +30,9 @@
    :default (qc/fill 255 0 0 80))
   (qc/push-matrix)
   (qc/push-style)
-  (qc/translate (+ 5 (- x (/ CW 2))) (+ 5 (- y (/ RH 2))) 0)
+  (let [x (* col CW)
+        y (* row RH)]
+    (qc/translate (+ 5 (- x (/ CW 2))) (+ 5 (- y (/ RH 2))) 0))
   (qc/no-stroke)
   (qc/box 2)
   (qc/pop-style)
@@ -38,21 +40,18 @@
 
 (defn simple-depth-at
   [col row k-depth-map]
-  (let [kx (* (+ col 0.5) @k-col-width)
-        ky (* (+ row 0.5) @k-row-height)
+  (let [kx (* col @k-col-width)
+        ky (* row @k-row-height)
         n (int (+ kx (* ky (bifocals/depth-width))))]
     (nth k-depth-map n)))
 
 ;; Draw a single grid of the instrument
 (defn display-at
   [col row k-depth-map pct-on]
-  (let [x (* (- NCOLS col 1) CW)
-        y (* row RH)
-        depth (simple-depth-at col row k-depth-map)
+  (let [depth (simple-depth-at col row k-depth-map)
         depth (qc/constrain-float depth 0.0 DEPTH_MAX)]
-    
     (draw-sensors/display-sensor-element-at col row depth pct-on)
-    (display-on-off-indicator-at x y col row depth)))
+    (display-on-off-indicator-at col row depth)))
 
 ;; Draw an instrument
 (defn draw-grid-instrument
@@ -96,7 +95,7 @@
         up-y 1
         up-z 0]
     (qc/camera eye-x eye-y eye-z center-x center-y center-z up-x up-y up-z))
-    (qc/no-stroke)
+  (qc/no-stroke)
   (qc/background 0 0 0 255)
   (let [k-depth-map (.depthMap (bifocals/kinect))]
     (draw-sensors/draw-sensor-grid)

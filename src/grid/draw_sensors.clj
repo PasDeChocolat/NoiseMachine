@@ -1,7 +1,7 @@
 (ns grid.draw-sensors
   (:require [grid.color-schemes :as color-schemes]
             [quil.core :as qc])
-  (:use [grid.setup :only [CW DEPTH_FAR_THRESH DEPTH_START_SECOND_LAYER DEPTH_MAX NCOLS RH]]
+  (:use [grid.setup :only [CW DEPTH_FAR_THRESH DEPTH_START_SECOND_LAYER DEPTH_MAX NCOLS RH WIDTH]]
         [grid.state :only [grid-sensors tick]]))
 
 (defn draw-sensor-point
@@ -14,9 +14,9 @@
 
 (defn update-sensor-point
   [{:keys [x y] :as sensor} [col row] t]
-  (let [t (+ (rand 0.01) t) ;; Make a randomness of points little smoother.
+  (let [t (+ (rand 0.01) t) ;; Make randomness of points little smoother.
         pos (+ col (* NCOLS row))
-        new-x (+ (* (- NCOLS col 1) CW) (* CW (qc/noise pos t)))
+        new-x (+ (* col CW) (* CW (qc/noise pos t)))
         new-y (+ (* row RH) (* RH (qc/noise pos (+ 5.2 t))))]
     (do
       (draw-sensor-point new-x new-y col row)

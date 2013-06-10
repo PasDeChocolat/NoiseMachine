@@ -1,5 +1,5 @@
 (ns grid.sound
-  (:use [grid.setup :only [DEPTH_FAR_THRESH LONG_COLS_START_COLS NCOLS NROWS]]
+  (:use [grid.setup :only [DEPTH_FAR_THRESH NCOLS NROWS]]
         [grid.state :only [at-at-pool long-col-state]]
         [overtone.live])
   (:require [overtone.inst.drum :as drum]
@@ -52,30 +52,30 @@
   [freq]
   (drum/bing :amp 2.0 :freq freq :attack 0.01 :decay 0.5))
 
-(defn rhythm-hit-at-dispatch [col row depth]
-  :bing)
+;; (defn rhythm-hit-at-dispatch [col row depth]
+;;   :bing)
 
-(defmulti rhythm-hit-at
-  "Play the rhythm part of this thing."
-  #'rhythm-hit-at-dispatch
-  :default :bing)
+;; (defmulti rhythm-hit-at
+;;   "Play the rhythm part of this thing."
+;;   #'rhythm-hit-at-dispatch
+;;   :default :bing)
 
-(defmethod rhythm-hit-at :bing [col row depth]
-  (let [freq (qc/map-range col 0 (last LONG_COLS_START_COLS) 120.0 180.0)
-        timing [0 400 800 1600 400 800 400]
-        last-index (dec (count timing))
-        do-bing (fn [index]
-                  (if (= index last-index)
-                    (swap! long-col-state #(assoc % col false)))
-                  (bing-with freq)
-                  )]
-    ;; (drum/bing :amp 2.0 :freq freq :attack 0.01 :decay 0.5)
-    (dorun (map-indexed #(at/at (+ (at/now) %2) (do-bing %1) at-at-pool) timing))
-    ))
+;; (defmethod rhythm-hit-at :bing [col row depth]
+;;   (let [freq (qc/map-range col 0 (last LONG_COLS_START_COLS) 120.0 180.0)
+;;         timing [0 400 800 1600 400 800 400]
+;;         last-index (dec (count timing))
+;;         do-bing (fn [index]
+;;                   (if (= index last-index)
+;;                     (swap! long-col-state #(assoc % col false)))
+;;                   (bing-with freq)
+;;                   )]
+;;     ;; (drum/bing :amp 2.0 :freq freq :attack 0.01 :decay 0.5)
+;;     (dorun (map-indexed #(at/at (+ (at/now) %2) (do-bing %1) at-at-pool) timing))
+;;     ))
 
-(defmethod rhythm-hit-at :kick [col row depth]
-  (let [freq (qc/map-range col 0 (last LONG_COLS_START_COLS) 200.0 250.0)]
-    (drum/kick :amp 0.00001 :freq freq :attack 0.01 :decay 0.5)))
+;; (defmethod rhythm-hit-at :kick [col row depth]
+;;   (let [freq (qc/map-range col 0 (last LONG_COLS_START_COLS) 200.0 250.0)]
+;;     (drum/kick :amp 0.00001 :freq freq :attack 0.01 :decay 0.5)))
 
 ;; (drum/bing :amp 2.0 :freq 120.0 :attack 0.01 :decay 0.5)
 ;; (drum/kick :amp 2.0 :freq 200.0 :attack 0.01 :decay 0.5)
