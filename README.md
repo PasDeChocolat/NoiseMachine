@@ -8,6 +8,7 @@ A Clojure library designed to ... well, that part is up to you.
 vga to hdmi on mac mini adapter and cable
 [x] add visuals
 [x] flip screen
+[x] rows >= 36 causes offset problem
 [ ] full screen command, or on launch
 [ ] make activated sensors fade until next activation
 [ ] refresh activated sensors on reactivation by increasing health, lerp to desired visual
