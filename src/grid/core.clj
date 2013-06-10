@@ -21,7 +21,7 @@
 (defn restart-sketch [] (qc/sketch-start grid))
 (defn close-sketch [] (qc/sketch-close grid))
 
-;;(run-sketch)
+;;(run-sketch) 
 ;;(qc/sketch-stop grid)
 ;;(qc/sketch-start grid)
 ;;(qc/sketch-close grid)
