@@ -50,7 +50,7 @@
     (assoc-in sensor [:burst :drop-y] new-drop)))
 
 (defn update-sensor-element-at
-  [col row sensor was-on? is-on? health]
+  [{{:keys [health]} :burst :as sensor} col row was-on? is-on?]
   (let [new-sensor (-> (update-burst-health sensor health was-on? is-on?)
                        (update-burst-pos))]
     (swap! grid-sensors #(assoc % [col row] new-sensor))
@@ -70,28 +70,28 @@
   (qc/pop-matrix))
 
 (defn display-sensor-element-at
-  [x y drop-y col row depth pct-on is-on? health]
-  (when (or
-         (> health 0)
-         (and (> depth DEPTH_START_SECOND_LAYER)
-              (< depth DEPTH_FAR_THRESH)
-              (> health 0)))
-    (qc/push-style)
-    (qc/push-matrix)
-    (qc/color-mode :hsb 0.0 1.0 1.0 1.0)
-    (let [hue 276.0
-          sat (qc/map-range pct-on 0.0 1.0 1.0 0.0)
-          val (qc/map-range pct-on 0.0 1.0 0.4 1.0)
-          alpha 1.0]
-      (qc/fill hue sat val alpha))
-    (qc/translate x y)
-    (draw-burst x y drop-y col row depth is-on? health)
-    (qc/pop-matrix)
-    (qc/pop-style)))
+  [{:keys [x y burst]} col row depth pct-on is-on?]
+  (let [{:keys [health drop-y] :or {drop-y 0}} burst]
+    (when (or
+           (> health 0)
+           (and (> depth DEPTH_START_SECOND_LAYER)
+                (< depth DEPTH_FAR_THRESH)
+                (> health 0)))
+      (qc/push-style)
+      (qc/push-matrix)
+      (qc/color-mode :hsb 0.0 1.0 1.0 1.0)
+      (let [hue 276.0
+            sat (qc/map-range pct-on 0.0 1.0 1.0 0.0)
+            val (qc/map-range pct-on 0.0 1.0 0.4 1.0)
+            alpha 1.0]
+        (qc/fill hue sat val alpha))
+      (qc/translate x y)
+      (draw-burst x y drop-y col row depth is-on? health)
+      (qc/pop-matrix)
+      (qc/pop-style))))
 
 (defn update-display-sensor-element-at
   [col row depth was-on? is-on? pct-on]
   (let [{:keys [x y burst] :or {x 0 y 0} :as sensor} (@grid-sensors [col row])
-        {:keys [health] } burst
-        {{:keys [health drop-y] :or {drop-y 0}} :burst} (update-sensor-element-at col row sensor was-on? is-on? health)]
-    (display-sensor-element-at x y drop-y col row depth pct-on is-on? health)))
+        sensor (update-sensor-element-at sensor col row was-on? is-on?)]
+    (display-sensor-element-at sensor col row depth pct-on is-on?)))

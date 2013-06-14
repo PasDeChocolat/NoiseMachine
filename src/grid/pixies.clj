@@ -36,6 +36,7 @@
 
 (defn add-pixie-at
   [col row depth]
-  (let [{:keys [x y]} (@grid-sensors [col row])
-        new-pixie (create-pixie-at-coords x y depth)]
+  (let [{:keys [x y burst]} (@grid-sensors [col row])
+        {:keys [drop-y]} burst
+        new-pixie (create-pixie-at-coords x (- y drop-y) depth)]
     (swap! all-pixies #(conj % new-pixie))))
