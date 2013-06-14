@@ -1,7 +1,7 @@
 (ns grid.draw-sensors
   (:require [grid.color-schemes :as color-schemes]
             [quil.core :as qc])
-  (:use [grid.setup :only [CW DEPTH_FAR_THRESH DEPTH_START_SECOND_LAYER DEPTH_MAX NCOLS RH WIDTH]]
+  (:use [grid.setup :only [CW DEPTH_FAR_THRESH DEPTH_START_SECOND_LAYER DEPTH_MAX MAX_SENSOR_BURST_HEALTH NCOLS RH WIDTH]]
         [grid.state :only [grid-sensors tick]]))
 
 (defn draw-sensor-point
@@ -31,25 +31,47 @@
                   (reduce (partial update-sensor-point tick) {} @grid-sensors))]
     (reset! grid-sensors new-grid)))
 
+(defn update-sensor-element-at
+  [col row sensor was-on? is-on? health]
+  (let [new-health (cond
+                    (and (not was-on?) is-on?) MAX_SENSOR_BURST_HEALTH
+                    (and was-on? is-on? (>= health 0)) (dec health)
+                    :else health)]
+    (when-not (= health new-health)
+      (let [updated-sensor (assoc-in sensor [:burst :health] new-health)]
+        (swap! grid-sensors #(assoc % [col row] updated-sensor))))))
+
+(defn draw-burst
+  [col row health]
+  (let [side (qc/map-range health 0 MAX_SENSOR_BURST_HEALTH 0 10)
+        half-side (/ side 2.0)
+        h (Math/sqrt (* 0.75 (Math/pow side 2)))
+        half-h (/ h 2.0)
+        theta (qc/noise col row (* 0.2 @tick))]
+    (qc/rotate theta)
+    (qc/triangle (- half-side) half-h 0 (- half-h) half-side half-h)))
+
 (defn display-sensor-element-at
-  [col row depth pct-on]
-  (let [{:keys [x y] :or {x 0 y 0}} (@grid-sensors [col row])
-        ;; diameter (qc/map-range depth 0 DEPTH_MAX 10 20)
-        ]
-    (when (and (> depth DEPTH_START_SECOND_LAYER) (< depth DEPTH_FAR_THRESH))
-      (qc/push-style)
-      (qc/push-matrix)
-      (qc/color-mode :hsb 0.0 1.0 1.0 1.0)
-      (let [hue 276.0
-            sat (qc/map-range pct-on 0.0 1.0 1.0 0.0)
-            val (qc/map-range pct-on 0.0 1.0 0.4 1.0)
-            alpha 1.0]
-        (qc/fill hue sat val alpha))
-      (qc/translate x y)
-      (let [half-side 5
-            half-h 4.33
-            theta (qc/noise col row (* 0.2 @tick))]
-        (qc/rotate theta)
-        (qc/triangle (- half-side) half-h 0 (- half-h) half-side half-h))
-      (qc/pop-matrix)
-      (qc/pop-style))))
+  [x y col row depth pct-on health]
+  (when (and (> depth DEPTH_START_SECOND_LAYER)
+             (< depth DEPTH_FAR_THRESH)
+             (> health 0))
+    (qc/push-style)
+    (qc/push-matrix)
+    (qc/color-mode :hsb 0.0 1.0 1.0 1.0)
+    (let [hue 276.0
+          sat (qc/map-range pct-on 0.0 1.0 1.0 0.0)
+          val (qc/map-range pct-on 0.0 1.0 0.4 1.0)
+          alpha 1.0]
+      (qc/fill hue sat val alpha))
+    (qc/translate x y)
+    (draw-burst col row health)
+    (qc/pop-matrix)
+    (qc/pop-style)))
+
+(defn update-display-sensor-element-at
+  [col row depth was-on? is-on? pct-on]
+  (let [{:keys [x y burst] :or {x 0 y 0} :as sensor} (@grid-sensors [col row])
+        {:keys [health]} burst]
+    (update-sensor-element-at col row sensor was-on? is-on? health)
+    (display-sensor-element-at x y col row depth pct-on health)))

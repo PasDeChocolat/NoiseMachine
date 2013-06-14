@@ -19,17 +19,23 @@
   (if (@grid-state [col row])
     (swap! grid-state #(assoc % [col row] false))))
 
+(defn is-on-at? [col row depth]
+  (and (> depth DEPTH_START_SECOND_LAYER)
+       (< depth DEPTH_FAR_THRESH)))
+
+(defn turn-on-off-at [col row depth is-on?]
+  (if is-on?
+    (turn-on-at col row depth)
+    (turn-off-at col row)))
+
 (defn display-on-off-indicator-at
-  [col row depth]
+  [col row depth is-on?]
   ;; Draw on/off indicator square:
-  (cond
-   (and (> depth DEPTH_START_SECOND_LAYER) (< depth DEPTH_FAR_THRESH)) (turn-on-at col row depth)
-   :default (turn-off-at col row))
-  (cond
-   (@grid-state [col row]) (qc/fill 0 255 0 80)
-   :default (qc/fill 255 0 0 80))
   (qc/push-matrix)
   (qc/push-style)
+  (cond
+   is-on? (qc/fill 0 255 0 80)
+   :default (qc/fill 255 0 0 80))
   (let [x (* col CW)
         y (* row RH)]
     (qc/translate (+ 5 (- x (/ CW 2))) (+ 5 (- y (/ RH 2))) 0))
@@ -47,11 +53,14 @@
 
 ;; Draw a single grid of the instrument
 (defn display-at
-  [col row k-depth-map pct-on]
+  [k-depth-map pct-on [col row]]
   (let [depth (simple-depth-at col row k-depth-map)
-        depth (qc/constrain-float depth 0.0 DEPTH_MAX)]
-    (draw-sensors/display-sensor-element-at col row depth pct-on)
-    (display-on-off-indicator-at col row depth)))
+        depth (qc/constrain-float depth 0.0 DEPTH_MAX)
+        was-on? (boolean (@grid-state [col row]))
+        is-on? (is-on-at? col row depth)]
+    (turn-on-off-at col row depth is-on?)
+    (display-on-off-indicator-at col row depth is-on?)
+    (draw-sensors/update-display-sensor-element-at col row depth was-on? is-on? pct-on)))
 
 ;; Draw an instrument
 (defn draw-grid-instrument
@@ -60,11 +69,10 @@
                         (cond (false? on-off) 0
                               :else 1))
         total-on (reduce #(+ %1 (on-1-off-0 %2)) 0 (vals @grid-state))
-        pct-on (/ (float total-on) (* (float NCOLS) (float NROWS)))]
-   (doall
-    (for [col (range NCOLS)
-          row (range NROWS)]
-      (display-at col row k-depth-map pct-on)))))
+        pct-on (/ (float total-on) (* (float NCOLS) (float NROWS)))
+        col-row-keys (keys @grid-state)]
+    (dorun
+     (map (partial display-at k-depth-map pct-on) col-row-keys))))
 
 (defn draw []
   (bifocals/tick)

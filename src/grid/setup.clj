@@ -30,6 +30,8 @@
 (def DEPTH_START_SECOND_LAYER 1000)
 (def DEPTH_MAX 7000.0)
 
+(def MAX_SENSOR_BURST_HEALTH 100)
+
 (defn setup-state
   []
   ;; Remember col/row sizes:
@@ -48,7 +50,7 @@
          row (range NROWS)
          :let [x (+ (* col CW) (rand-int CW))
                y (+ (* row RH) (rand-int RH))]]
-     (swap! grid-sensors #(assoc % [col row] {:x x :y y})))))
+     (swap! grid-sensors #(assoc % [col row] {:x x :y y :burst {:health MAX_SENSOR_BURST_HEALTH}})))))
 
 (defn setup []
   (qc/frame-rate 30)
