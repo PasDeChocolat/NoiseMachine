@@ -50,7 +50,10 @@
          row (range NROWS)
          :let [x (+ (* col CW) (rand-int CW))
                y (+ (* row RH) (rand-int RH))]]
-     (swap! grid-sensors #(assoc % [col row] {:x x :y y :burst {:health MAX_SENSOR_BURST_HEALTH}})))))
+     (swap! grid-sensors #(assoc % [col row]
+                                 {:x x :y y
+                                  :burst {:health MAX_SENSOR_BURST_HEALTH
+                                          :drop-y 0}})))))
 
 (defn setup []
   (qc/frame-rate 30)

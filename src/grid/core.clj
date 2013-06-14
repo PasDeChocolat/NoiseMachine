@@ -25,6 +25,3 @@
 ;;(qc/sketch-stop grid)
 ;;(qc/sketch-start grid)
 ;;(qc/sketch-close grid)
-
-;;(drum/bing :freq 500)
-

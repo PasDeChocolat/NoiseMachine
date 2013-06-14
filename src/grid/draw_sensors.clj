@@ -44,7 +44,7 @@
     (assoc-in sensor [:burst :health] new-health)))
 
 (defn update-burst-pos
-  [{x :x y :y { :keys [drop-y health] :or {drop-y 0} } :burst :as sensor}]
+  [{x :x y :y { :keys [drop-y health]} :burst :as sensor}]
   (let [new-drop (qc/map-range health MAX_SENSOR_BURST_HEALTH 0 0 200)
         new-drop (qc/lerp drop-y new-drop 0.2)]
     (assoc-in sensor [:burst :drop-y] new-drop)))
@@ -71,7 +71,7 @@
 
 (defn display-sensor-element-at
   [{:keys [x y burst]} col row depth pct-on is-on?]
-  (let [{:keys [health drop-y] :or {drop-y 0}} burst]
+  (let [{:keys [health drop-y]} burst]
     (when (or
            (> health 0)
            (and (> depth DEPTH_START_SECOND_LAYER)
