@@ -52,7 +52,7 @@
 
 (defn setup []
   (qc/frame-rate 15)
-  (.setMirror (bifocals/kinect) false)
+  (.setMirror (bifocals/kinect) true)
 
   (setup-state)
   
