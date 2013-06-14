@@ -31,29 +31,46 @@
                   (reduce (partial update-sensor-point tick) {} @grid-sensors))]
     (reset! grid-sensors new-grid)))
 
-(defn update-sensor-element-at
-  [col row sensor was-on? is-on? health]
+
+;; Display sensor bursts and such...
+
+(defn update-burst-health
+  [sensor health was-on? is-on?]
   (let [new-health (cond
                     (and (not was-on?) is-on?) MAX_SENSOR_BURST_HEALTH
                     (and was-on? is-on? (>= health 0)) (dec health)
                     (and (not is-on?) (>= health 0)) (dec health)
                     :else health)]
-    (when-not (= health new-health)
-      (let [updated-sensor (assoc-in sensor [:burst :health] new-health)]
-        (swap! grid-sensors #(assoc % [col row] updated-sensor))))))
+    (assoc-in sensor [:burst :health] new-health)))
+
+(defn update-burst-pos
+  [{x :x y :y { :keys [drop-y health] :or {drop-y 0} } :burst :as sensor}]
+  (let [new-drop (qc/map-range health MAX_SENSOR_BURST_HEALTH 0 0 200)
+        new-drop (qc/lerp drop-y new-drop 0.2)]
+    (assoc-in sensor [:burst :drop-y] new-drop)))
+
+(defn update-sensor-element-at
+  [col row sensor was-on? is-on? health]
+  (let [new-sensor (-> (update-burst-health sensor health was-on? is-on?)
+                       (update-burst-pos))]
+    (swap! grid-sensors #(assoc % [col row] new-sensor))
+    new-sensor))
 
 (defn draw-burst
-  [col row health]
+  [x y drop-y col row depth is-on? health]
+  (qc/push-matrix)
   (let [side (qc/map-range health 0 MAX_SENSOR_BURST_HEALTH 0 10)
         half-side (/ side 2.0)
         h (Math/sqrt (* 0.75 (Math/pow side 2)))
         half-h (/ h 2.0)
         theta (qc/noise col row (* 0.2 @tick))]
+    (qc/translate 0 drop-y)
     (qc/rotate theta)
-    (qc/triangle (- half-side) half-h 0 (- half-h) half-side half-h)))
+    (qc/triangle (- half-side) half-h 0 (- half-h) half-side half-h))
+  (qc/pop-matrix))
 
 (defn display-sensor-element-at
-  [x y col row depth pct-on health]
+  [x y drop-y col row depth pct-on is-on? health]
   (when (or
          (> health 0)
          (and (> depth DEPTH_START_SECOND_LAYER)
@@ -68,13 +85,13 @@
           alpha 1.0]
       (qc/fill hue sat val alpha))
     (qc/translate x y)
-    (draw-burst col row health)
+    (draw-burst x y drop-y col row depth is-on? health)
     (qc/pop-matrix)
     (qc/pop-style)))
 
 (defn update-display-sensor-element-at
   [col row depth was-on? is-on? pct-on]
   (let [{:keys [x y burst] :or {x 0 y 0} :as sensor} (@grid-sensors [col row])
-        {:keys [health]} burst]
-    (update-sensor-element-at col row sensor was-on? is-on? health)
-    (display-sensor-element-at x y col row depth pct-on health)))
+        {:keys [health] } burst
+        {{:keys [health drop-y] :or {drop-y 0}} :burst} (update-sensor-element-at col row sensor was-on? is-on? health)]
+    (display-sensor-element-at x y drop-y col row depth pct-on is-on? health)))
