@@ -10,8 +10,8 @@ vga to hdmi on mac mini adapter and cable
 [x] flip screen
 [x] rows >= 36 causes offset problem!
 [ ] full screen command, or on launch
-[ ] make activated sensors fade until next activation
-[ ] refresh activated sensors on reactivation by increasing health, lerp to desired visual
+[x] make activated sensors fade until next activation
+[x] refresh activated sensors on reactivation by increasing health
 [ ] closer to wall, make sensor dots more detailed, e.g. cluster of actors
 [ ] from time to time, close-up of closest dots to wall
 [ ] from time to time, close up to nice looking grid (that cara likes)
