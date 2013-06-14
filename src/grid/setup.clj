@@ -9,8 +9,11 @@
 
 ;; (def NCOLS 24)
 ;; (def NROWS 18)
-(def NCOLS 48)
-(def NROWS 36)
+;; (def NCOLS 48)
+;; (def NROWS 36)
+(def NCOLS 36)
+(def NROWS 27)
+
 ;; (setup-state)
 
 (def MARGIN 20)
