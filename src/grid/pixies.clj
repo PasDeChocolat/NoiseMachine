@@ -38,5 +38,5 @@
   [col row depth]
   (let [{:keys [x y burst]} (@grid-sensors [col row])
         {:keys [drop-y]} burst
-        new-pixie (create-pixie-at-coords x (- y drop-y) depth)]
+        new-pixie (create-pixie-at-coords x (+ y drop-y) depth)]
     (swap! all-pixies #(conj % new-pixie))))
