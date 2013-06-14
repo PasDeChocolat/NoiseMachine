@@ -36,6 +36,7 @@
   (let [new-health (cond
                     (and (not was-on?) is-on?) MAX_SENSOR_BURST_HEALTH
                     (and was-on? is-on? (>= health 0)) (dec health)
+                    (and (not is-on?) (>= health 0)) (dec health)
                     :else health)]
     (when-not (= health new-health)
       (let [updated-sensor (assoc-in sensor [:burst :health] new-health)]
@@ -53,9 +54,11 @@
 
 (defn display-sensor-element-at
   [x y col row depth pct-on health]
-  (when (and (> depth DEPTH_START_SECOND_LAYER)
-             (< depth DEPTH_FAR_THRESH)
-             (> health 0))
+  (when (or
+         (> health 0)
+         (and (> depth DEPTH_START_SECOND_LAYER)
+              (< depth DEPTH_FAR_THRESH)
+              (> health 0)))
     (qc/push-style)
     (qc/push-matrix)
     (qc/color-mode :hsb 0.0 1.0 1.0 1.0)
