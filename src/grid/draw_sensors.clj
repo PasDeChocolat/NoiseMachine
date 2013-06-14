@@ -34,14 +34,22 @@
 (defn display-sensor-element-at
   [col row depth pct-on]
   (let [{:keys [x y] :or {x 0 y 0}} (@grid-sensors [col row])
-        r (qc/map-range depth 0 DEPTH_MAX 10 20)]
+        ;; diameter (qc/map-range depth 0 DEPTH_MAX 10 20)
+        ]
     (when (and (> depth DEPTH_START_SECOND_LAYER) (< depth DEPTH_FAR_THRESH))
       (qc/push-style)
+      (qc/push-matrix)
       (qc/color-mode :hsb 0.0 1.0 1.0 1.0)
       (let [hue 276.0
             sat (qc/map-range pct-on 0.0 1.0 1.0 0.0)
             val (qc/map-range pct-on 0.0 1.0 0.4 1.0)
             alpha 1.0]
         (qc/fill hue sat val alpha))
-      (qc/ellipse x y r r)
+      (qc/translate x y)
+      (let [half-side 5
+            half-h 4.33
+            theta (qc/noise col row (* 0.2 @tick))]
+        (qc/rotate theta)
+        (qc/triangle (- half-side) half-h 0 (- half-h) half-side half-h))
+      (qc/pop-matrix)
       (qc/pop-style))))
