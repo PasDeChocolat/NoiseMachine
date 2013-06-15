@@ -2,7 +2,9 @@
   (:use [grid.setup :only [HEIGHT WIDTH]])
   (:require [grid.draw :as dynamic-draw]
             [grid.setup :as dynamic-setup]
-            [quil.core :as qc]))
+            [quil.core :as qc])
+  (:gen-class :main true)
+  )
 
 (defn on-close-sketch []
   ;;(stop)
@@ -20,6 +22,14 @@
 (defn stop-sketch [] (qc/sketch-stop grid))
 (defn restart-sketch [] (qc/sketch-start grid))
 (defn close-sketch [] (qc/sketch-close grid))
+
+(defn -main
+  "This is where the magic happens."
+  [& args]
+  ;; (println "Sleep until Overtone is ready...")
+  ;; (Thread/sleep 10000)
+  (println "Running sketch.")
+  (run-sketch))
 
 ;;(run-sketch)
 ;;(qc/sketch-stop grid)

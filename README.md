@@ -10,11 +10,14 @@ vga to hdmi on mac mini adapter and cable
 [x] flip screen
 [x] rows >= 36 causes offset problem!
 [ ] full screen command, or on launch
+[ ] run as app
 [x] make activated sensors fade until next activation
 [x] refresh activated sensors on reactivation by increasing health
 [ ] closer to wall, make sensor dots more detailed, e.g. cluster of actors
 [ ] from time to time, close-up of closest dots to wall
 [ ] from time to time, close up to nice looking grid (that cara likes)
+[ ] turn off bottom or top rows via settings
+[ ] turn on/off mouse zoom/rotate controls via keystroke
 
 * Open core.clj in buffer.
 * `C-c M-j` nREPL-jack-in
