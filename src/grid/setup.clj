@@ -4,8 +4,16 @@
             [bifocals.core :as bifocals])
   (:use [grid.state :only [grid-sensors grid-state k-col-width k-row-height]]))
 
-(def WIDTH 1400.0)
-(def HEIGHT 1000.0)
+;; (def WIDTH 1400.0)
+;; (def HEIGHT 1000.0)
+
+;; 1080p
+;; (def WIDTH 1920.0)
+;; (def HEIGHT 1080.0)
+
+;; 1920 x 1200 scaled
+(def WIDTH 1920.0)
+(def HEIGHT 1200.0)
 
 ;; (def NCOLS 24)
 ;; (def NROWS 18)
