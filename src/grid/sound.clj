@@ -48,10 +48,10 @@
            (= 0 (mod col col-factor)))
       (cond
        (= 3 row) (gharp/play-single-note-by-int  (- the-note 12))
-       (= 10 row) (gharp/play-single-note-by-int the-note)
-       (= 17 row) (gharp/play-single-note-by-int (+ the-note 12))
-       (= 24 row) (gharp/play-single-note-by-int (+ the-note 24))
-       (= 31 row) (gharp/play-single-note-by-int (+ the-note 36))))))
+       (= 8 row) (gharp/play-single-note-by-int the-note)
+       (= 13 row) (gharp/play-single-note-by-int (+ the-note 12))
+       (= 18 row) (gharp/play-single-note-by-int (+ the-note 24))
+       (= 23 row) (gharp/play-single-note-by-int (+ the-note 36))))))
 
 (defn hit-at
   [col row depth]
