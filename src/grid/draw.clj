@@ -75,6 +75,7 @@
      (map (partial display-at k-depth-map pct-on) col-row-keys))))
 
 (defn draw []
+  (qc/frame-rate 60)
   (bifocals/tick)
   (swap! tick inc)
 
@@ -93,14 +94,14 @@
         ;; eye-y: 967
         ;; zoom-factor: 0.5668403
         
-        ;; eye-x (qc/mouse-x)
-        eye-x 967.0 ;; museum
+        eye-x (qc/mouse-x)
+        ;; eye-x 967.0 ;; museum
         ;; eye-x 339   ;; home
         ;; _ (println "eye-x:" eye-x)
         eye-y (/ (qc/height) 2.0)
         eye-z (/ (/ (qc/height) 2.0) (qc/tan (/ (* Math/PI 60.0) 360.0)))
-        ;; zoom-factor (qc/map-range (qc/mouse-y) 0 (qc/height) 0 1.0)
-        zoom-factor 0.5668403  ;; museum
+        zoom-factor (qc/map-range (qc/mouse-y) 0 (qc/height) 0 1.0)
+        ;; zoom-factor 0.5668403  ;; museum
         ;; zoom-factor 0.83913934 ;; home
         ;; _ (println "zoom-factor:" zoom-factor)
         eye-z (* zoom-factor (* 2.0 eye-z))

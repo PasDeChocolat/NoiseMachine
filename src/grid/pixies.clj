@@ -4,13 +4,15 @@
   (:require [grid.draw-pixie :as draw-pixie]
             [quil.core :as qc]))
 
-(def MAX_HEALTH 40)
+(def MAX_HEALTH_MAX 20)
+(def MAX_HEALTH_MIN 5)
 (def PIXIE_TYPES [:plus :circle])
 
 (defn create-pixie-at-coords
   [x y depth]
   (let [d (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 0.1 1.0)
-        health (rand (* d MAX_HEALTH))]
+        ;; health (rand (* d MAX_HEALTH))
+        health (qc/map-range d 0.1 1.0 MAX_HEALTH_MAX MAX_HEALTH_MIN)]
     {:x x :y y
      :depth depth
      ;; :type (nth PIXIE_TYPES (rand-int (count PIXIE_TYPES)))

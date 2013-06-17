@@ -8,6 +8,6 @@
                  [quil "1.6.0"]
                  [bifocals "0.1.0"]
                  [overtone "0.9.0-SNAPSHOT"]]
-  :jvm-opts ["-Xmx768M"]
+  :jvm-opts ["-Xmx1024M"]
   :main grid.core
   )
