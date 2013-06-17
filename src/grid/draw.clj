@@ -58,9 +58,9 @@
   (let [depth (simple-depth-at col row k-depth-map)
         depth (qc/constrain-float depth 0.0 DEPTH_MAX)
         was-on? (boolean (@grid-state [col row]))
-        is-on? (is-on-at? col row depth)]
+         is-on? (is-on-at? col row depth)]
     (turn-on-off-at col row depth is-on?)
-    (display-on-off-indicator-at col row depth is-on?)
+    ;; (display-on-off-indicator-at col row depth is-on?)
     (draw-sensors/update-display-sensor-element-at col row depth was-on? is-on? pct-on)))
 
 ;; Draw an instrument
@@ -95,14 +95,16 @@
         ;; eye-y: 967
         ;; zoom-factor: 0.5668403
         
-        eye-x (qc/mouse-x)
-        ;; eye-x 967.0 ;; museum
+        ;; eye-x (qc/mouse-x)
+        eye-x 967.0 ;; museum
         ;; eye-x 339   ;; home
         ;; _ (println "eye-x:" eye-x)
+
         eye-y (/ (qc/height) 2.0)
         eye-z (/ (/ (qc/height) 2.0) (qc/tan (/ (* Math/PI 60.0) 360.0)))
-        zoom-factor (qc/map-range (qc/mouse-y) 0 (qc/height) 0 1.0)
-        ;; zoom-factor 0.5668403  ;; museum
+
+        ;; zoom-factor (qc/map-range (qc/mouse-y) 0 (qc/height) 0 1.0)
+        zoom-factor 0.5668403  ;; museum
         ;; zoom-factor 0.83913934 ;; home
         ;; _ (println "zoom-factor:" zoom-factor)
         eye-z (* zoom-factor (* 2.0 eye-z))

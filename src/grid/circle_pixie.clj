@@ -4,7 +4,7 @@
             [quil.core :as qc]))
 
 (def MAX_THINGS 3)
-(def MAX_HEIGHT_MAX 140)
+(def MAX_HEIGHT_MAX 100)
 (def MAX_HEIGHT_MIN 30)
 (def MAX_VEL_MIN 0.5)
 (def MAX_VEL_MAX 10.0)
