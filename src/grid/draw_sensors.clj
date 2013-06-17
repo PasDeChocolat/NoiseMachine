@@ -56,64 +56,25 @@
     (swap! grid-sensors #(assoc % [col row] new-sensor))
     new-sensor))
 
-(defn draw-burst-triangle
-  [x y drop-y col row depth is-on? health]
-  (qc/push-matrix)
-  (let [side (qc/map-range health 0 MAX_SENSOR_BURST_HEALTH 0 10)
-        half-side (/ side 2.0)
-        h (Math/sqrt (* 0.75 (Math/pow side 2)))
-        half-h (/ h 2.0)
-        theta (qc/noise col row (* 0.2 @tick))]
-    (qc/translate 0 drop-y)
-    (qc/rotate theta)
-    (qc/triangle (- half-side) half-h 0 (- half-h) half-side half-h))
-  (qc/pop-matrix))
-
-(defn draw-burst-square
-  [x y drop-y col row depth is-on? health]
-  (qc/push-matrix)
-  (qc/push-style)
-  (let [side (qc/map-range health 0 MAX_SENSOR_BURST_HEALTH 0 40)
-        theta (qc/noise col row (* 0.2 @tick))]
-    (qc/translate 0 drop-y)
-    (qc/rotate theta)
-    (qc/no-fill)
-    (qc/color-mode :rgb 255 255 255)
-    (qc/stroke 255)
-    (qc/stroke-weight 0.5)
-    (qc/rect-mode :center)
-    (qc/rect 0 0 side side))
-  (qc/pop-style)
-  (qc/pop-matrix))
-
-(defn draw-burst-circle
-  [x y drop-y col row depth is-on? health]
-  (qc/push-matrix)
-  (qc/push-style)
-  (let [side (qc/map-range health 0 MAX_SENSOR_BURST_HEALTH 0 40)
-        ;; half-side (/ side 2.0)
-        ;; h (Math/sqrt (* 0.75 (Math/pow side 2)))
-        ;; half-h (/ h 2.0)
-        theta (qc/noise col row (* 0.2 @tick))
-        ]
-    (qc/translate 0 drop-y)
-    (qc/rotate theta)
-    ;; (qc/triangle (- half-side) half-h 0 (- half-h) half-side half-h)
-    (qc/no-fill)
-    (qc/color-mode :rgb)
-    (qc/stroke 255 255 255 255)
-    (qc/stroke-weight 0.5)
-    (qc/ellipse 0 0 side side)
-    (qc/ellipse 0 0 (/ side 2.0) (/ side 2.0)))
-  (qc/pop-style)
-  (qc/pop-matrix))
+;; (defn draw-burst-triangle
+;;   [x y drop-y col row depth is-on? health]
+;;   (qc/push-matrix)
+;;   (let [side (qc/map-range health 0 MAX_SENSOR_BURST_HEALTH 0 10)
+;;         half-side (/ side 2.0)
+;;         h (Math/sqrt (* 0.75 (Math/pow side 2)))
+;;         half-h (/ h 2.0)
+;;         theta (qc/noise col row (* 0.2 @tick))]
+;;     (qc/translate 0 drop-y)
+;;     (qc/rotate theta)
+;;     (qc/triangle (- half-side) half-h 0 (- half-h) half-side half-h))
+;;   (qc/pop-matrix))
 
 (defn draw-burst-thing
   [x y drop-y col row depth is-on? health]
   (qc/push-matrix)
   (qc/push-style)
   (let [side (qc/map-range health 0 MAX_SENSOR_BURST_HEALTH 0 40)
-        theta (qc/noise col row (* 0.2 @tick))]
+        theta (- (* qc/HALF-PI  (qc/noise col row (* 0.2 @tick))) qc/QUARTER-PI)]
     (qc/translate 0 drop-y)
     (qc/rotate theta)
     (qc/no-fill)
