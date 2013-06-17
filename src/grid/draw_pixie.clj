@@ -1,5 +1,6 @@
 (ns grid.draw-pixie
   (:require [quil.core :as qc]
+            [grid.circle-pixie :as circle-pixie]
             [grid.plus-pixie :as plus-pixie]))
 
 ;; Must remove and re-add the multi-method when working in the REPL.
@@ -19,6 +20,10 @@
 (defmethod draw-specific-pixie :plus
   [pixie]
   (plus-pixie/draw-pixie pixie))
+
+(defmethod draw-specific-pixie :circle
+  [pixie]
+  (circle-pixie/draw-pixie pixie))
 
 (defn draw-pixie
   [pixie]

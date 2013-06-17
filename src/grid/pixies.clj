@@ -5,7 +5,7 @@
             [quil.core :as qc]))
 
 (def MAX_HEALTH 40)
-(def PIXIE_TYPES [:plus])
+(def PIXIE_TYPES [:plus :circle])
 
 (defn create-pixie-at-coords
   [x y depth]
@@ -13,7 +13,8 @@
         health (rand (* d MAX_HEALTH))]
     {:x x :y y
      :depth depth
-     :type (nth PIXIE_TYPES (rand-int (count PIXIE_TYPES)))
+     ;; :type (nth PIXIE_TYPES (rand-int (count PIXIE_TYPES)))
+     :type :circle
      :health health
      :initial-state { :health health }
      :color [(rand 255) (rand 255) (rand 255)]
