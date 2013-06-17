@@ -2,7 +2,8 @@
   (:use [grid.setup :only [DEPTH_FAR_THRESH NCOLS NROWS]]
         [grid.state :only [at-at-pool long-col-state]]
         [overtone.live])
-  (:require [overtone.inst.drum :as drum]
+  (:require [grid.harpsichord :as gharp]
+            [overtone.inst.drum :as drum]
             [overtone.at-at :as at]
             [quil.core :as qc]))
 
@@ -11,18 +12,8 @@
 ;;  - If sector is commonly used, it could have it's volume degrade
 ;;  with use.
 
-(defn- hit-at-dispatch [col row depth]
-  (cond
-   true :bing
-   ;; true :piano
-   :default :bing))
-
-(defmulti hit-at
-  "Play sound, determined by location of movement."
-  #'hit-at-dispatch
-  :default :bing)
-
-(defmethod hit-at :bing [col row depth]
+(defn hit-at-bing
+  [col row depth]
   (let [
         d (qc/map-range depth 0 DEPTH_FAR_THRESH 0.0 1000.0)
         d (qc/constrain-float d 0.0 1000.0)
@@ -46,11 +37,26 @@
         ]
     (drum/bing :amp amp :freq freq :attack attack :decay decay)))
 
+(defn hit-at-harpsichord
+  [col row depth]
+  (let [left-note (- 60 (int (/ NCOLS 2)))
+        the-note (+ col left-note)
+        ;;_ (println "the-note:" the-note)
+        ]
+    (when (= 0 (mod row 5))
+     (gharp/play-single-note-by-int the-note)))
+  
+  )
+
+(defn hit-at
+  [col row depth]
+  ;; (hit-at-bing col row depth)
+  (hit-at-harpsichord col row depth))
 
 ;; Binging
-(defn bing-with
-  [freq]
-  (drum/bing :amp 2.0 :freq freq :attack 0.01 :decay 0.5))
+;; (defn bing-with
+;;   [freq]
+;;   (drum/bing :amp 2.0 :freq freq :attack 0.01 :decay 0.5))
 
 ;; (defn rhythm-hit-at-dispatch [col row depth]
 ;;   :bing)
