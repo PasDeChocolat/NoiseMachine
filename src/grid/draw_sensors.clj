@@ -4,6 +4,8 @@
   (:use [grid.setup :only [CW DEPTH_FAR_THRESH DEPTH_START_SECOND_LAYER DEPTH_MAX MAX_SENSOR_BURST_HEALTH NCOLS RH WIDTH]]
         [grid.state :only [grid-sensors tick]]))
 
+(def MAX_SENSOR_DROP 200)
+
 (defn draw-sensor-point
   [t [[col row] { :keys [x y]}]]
   (let [t (* t 0.1)
@@ -45,7 +47,7 @@
 
 (defn update-burst-pos
   [{x :x y :y { :keys [drop-y health]} :burst :as sensor}]
-  (let [new-drop (qc/map-range health MAX_SENSOR_BURST_HEALTH 0 0 200)
+  (let [new-drop (qc/map-range health MAX_SENSOR_BURST_HEALTH 0 0 MAX_SENSOR_DROP)
         new-drop (qc/lerp drop-y new-drop 0.2)]
     (assoc-in sensor [:burst :drop-y] new-drop)))
 
@@ -80,7 +82,7 @@
     (qc/no-fill)
     (qc/color-mode :rgb 255 255 255)
     (qc/stroke 255)
-    (qc/stroke-weight 0.5)
+    (qc/stroke-weight 0.7)
     (qc/line 0 side 0 (- side)))
   (qc/pop-style)
   (qc/pop-matrix))
