@@ -42,18 +42,20 @@
   (let [col-factor 2
         left-note (- 60 (int (/ NCOLS 2 col-factor)))
         the-note (int (+ (* (/ 1 col-factor) col) left-note))
-        ;;_ (println "the-note:" the-note)
         duration  (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 0.5 50)
         ;; duration  (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 100 1)
-        ]
-    (when (and
+        prob (> 0.37 (rand))]
+    (when (and prob
            (= 0 (mod col col-factor)))
       (cond
-       (= 3 row) (gharp/play-single-note-by-int  (- the-note 12) duration)
-       (= 8 row) (gharp/play-single-note-by-int the-note duration)
-       (= 13 row) (gharp/play-single-note-by-int (+ the-note 12) duration)
-       (= 18 row) (gharp/play-single-note-by-int (+ the-note 24) duration)
-       (= 23 row) (gharp/play-single-note-by-int (+ the-note 36) duration)))))
+       (>= 2 row) (gharp/play-single-note-by-int  (- the-note 24) duration)
+       (>= 7 row) (gharp/play-single-note-by-int  (- the-note 12) duration)
+       (>= 12 row) (gharp/play-single-note-by-int the-note duration)
+       (>= 17 row) (gharp/play-single-note-by-int (+ the-note 12) duration)
+       (>= 22 row) (gharp/play-single-note-by-int (+ the-note 24) duration)
+       ;; (< 23 row) (gharp/play-single-note-by-int (+ the-note 36) duration)
+       (and (> 0.4 (rand)) (< 22 row)) (gharp/play-single-note-by-int (+ the-note 36) duration)
+       ))))
 
 (defn hit-at
   [col row depth]
