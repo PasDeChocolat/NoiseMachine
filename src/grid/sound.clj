@@ -39,14 +39,19 @@
 
 (defn hit-at-harpsichord
   [col row depth]
-  (let [left-note (- 60 (int (/ NCOLS 2)))
-        the-note (+ col left-note)
+  (let [col-factor 2
+        left-note (- 60 (int (/ NCOLS 2 col-factor)))
+        the-note (int (+ (* (/ 1 col-factor) col) left-note))
         ;;_ (println "the-note:" the-note)
         ]
-    (when (= 0 (mod row 5))
-     (gharp/play-single-note-by-int the-note)))
-  
-  )
+    (when (and
+           (= 0 (mod col col-factor)))
+      (cond
+       (= 3 row) (gharp/play-single-note-by-int  (- the-note 12))
+       (= 10 row) (gharp/play-single-note-by-int the-note)
+       (= 17 row) (gharp/play-single-note-by-int (+ the-note 12))
+       (= 24 row) (gharp/play-single-note-by-int (+ the-note 24))
+       (= 31 row) (gharp/play-single-note-by-int (+ the-note 36))))))
 
 (defn hit-at
   [col row depth]
