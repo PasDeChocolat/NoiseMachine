@@ -1,5 +1,5 @@
 (ns grid.sound
-  (:use [grid.setup :only [DEPTH_FAR_THRESH NCOLS NROWS]]
+  (:use [grid.setup :only [DEPTH_FAR_THRESH DEPTH_START_SECOND_LAYER NCOLS NROWS]]
         [grid.state :only [at-at-pool long-col-state]]
         [overtone.live])
   (:require [grid.harpsichord :as gharp]
@@ -43,15 +43,17 @@
         left-note (- 60 (int (/ NCOLS 2 col-factor)))
         the-note (int (+ (* (/ 1 col-factor) col) left-note))
         ;;_ (println "the-note:" the-note)
+        duration  (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 1 50)
+        ;; duration  (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 100 1)
         ]
     (when (and
            (= 0 (mod col col-factor)))
       (cond
-       (= 3 row) (gharp/play-single-note-by-int  (- the-note 12))
-       (= 8 row) (gharp/play-single-note-by-int the-note)
-       (= 13 row) (gharp/play-single-note-by-int (+ the-note 12))
-       (= 18 row) (gharp/play-single-note-by-int (+ the-note 24))
-       (= 23 row) (gharp/play-single-note-by-int (+ the-note 36))))))
+       (= 3 row) (gharp/play-single-note-by-int  (- the-note 12) duration)
+       (= 8 row) (gharp/play-single-note-by-int the-note duration)
+       (= 13 row) (gharp/play-single-note-by-int (+ the-note 12) duration)
+       (= 18 row) (gharp/play-single-note-by-int (+ the-note 24) duration)
+       (= 23 row) (gharp/play-single-note-by-int (+ the-note 36) duration)))))
 
 (defn hit-at
   [col row depth]

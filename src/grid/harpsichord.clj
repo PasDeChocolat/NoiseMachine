@@ -1,8 +1,8 @@
 (ns grid.harpsichord
   (:use [overtone.core]))
 
-(definst harpsichord [freq 440]
-  (let [duration 1]
+(definst harpsichord [freq 440 initial-duration 1]
+  (let [duration initial-duration]
     (*
       (line:kr 1 1 duration FREE)
       (pluck (* (white-noise) (env-gen (perc 0.001 5) :action FREE))
@@ -31,8 +31,12 @@
   (-> note-by-key note midi->hz harpsichord))
 
 (defn play-single-note-by-int
-  [note-int]
-  (-> note-int midi->hz harpsichord))
+  [note-int duration]
+  ;;(play (metronome 120) melody)
+  (let [harp (fn [freq] (harpsichord freq duration))]
+    (-> note-int
+       midi->hz
+       harp)))
 
 (defn play [metro notes] 
   (let [play-note (fn [[beat pitch]] (at (metro beat) (-> pitch note midi->hz harpsichord)))]
