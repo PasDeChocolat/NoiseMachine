@@ -54,26 +54,21 @@
 
 ;; Draw a single grid of the instrument
 (defn display-at
-  [k-depth-map pct-on [col row]]
+  [k-depth-map [col row]]
   (let [depth (simple-depth-at col row k-depth-map)
         depth (qc/constrain-float depth 0.0 DEPTH_MAX)
         was-on? (boolean (@grid-state [col row]))
          is-on? (is-on-at? col row depth)]
     (turn-on-off-at col row depth is-on?)
     ;; (display-on-off-indicator-at col row depth is-on?)
-    (draw-sensors/update-display-sensor-element-at col row depth was-on? is-on? pct-on)))
+    (draw-sensors/update-display-sensor-element-at col row depth was-on? is-on?)))
 
 ;; Draw an instrument
 (defn draw-grid-instrument
   [k-depth-map]
-  (let [on-1-off-0 (fn [on-off]
-                        (cond (false? on-off) 0
-                              :else 1))
-        total-on (reduce #(+ %1 (on-1-off-0 %2)) 0 (vals @grid-state))
-        pct-on (/ (float total-on) (* (float NCOLS) (float NROWS)))
-        col-row-keys (keys @grid-state)]
+  (let [col-row-keys (keys @grid-state)]
     (dorun
-     (map (partial display-at k-depth-map pct-on) col-row-keys))))
+     (map (partial display-at k-depth-map) col-row-keys))))
 
 (defn draw []
   (qc/frame-rate 60)

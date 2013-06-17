@@ -91,7 +91,7 @@
   (apply draw-burst-thing args))
 
 (defn display-sensor-element-at
-  [{:keys [x y burst]} col row depth pct-on is-on?]
+  [{:keys [x y burst]} col row depth is-on?]
   (let [{:keys [health drop-y]} burst]
     (when (or
            (> health 0)
@@ -102,17 +102,15 @@
       (qc/push-matrix)
       (qc/color-mode :hsb 0.0 1.0 1.0 1.0)
       (let [hue 276.0
-            sat (qc/map-range pct-on 0.0 1.0 1.0 0.0)
-            val (qc/map-range pct-on 0.0 1.0 0.4 1.0)
             alpha 1.0]
-        (qc/fill hue sat val alpha))
+        (qc/fill hue 1.0 1.0 alpha))
       (qc/translate x y)
       (draw-burst x y drop-y col row depth is-on? health)
       (qc/pop-matrix)
       (qc/pop-style))))
 
 (defn update-display-sensor-element-at
-  [col row depth was-on? is-on? pct-on]
+  [col row depth was-on? is-on?]
   (let [{:keys [x y burst] :or {x 0 y 0} :as sensor} (@grid-sensors [col row])
         sensor (update-sensor-element-at sensor col row was-on? is-on?)]
-    (display-sensor-element-at sensor col row depth pct-on is-on?)))
+    (display-sensor-element-at sensor col row depth is-on?)))
