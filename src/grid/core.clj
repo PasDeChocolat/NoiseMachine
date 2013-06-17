@@ -1,6 +1,7 @@
 (ns grid.core
   (:use [grid.setup :only [HEIGHT WIDTH]])
   (:require [grid.draw :as dynamic-draw]
+            [grid.harpsichord :as gharp]
             [grid.setup :as dynamic-setup]
             [quil.core :as qc])
   (:gen-class :main true)
@@ -29,7 +30,8 @@
   ;; (println "Sleep until Overtone is ready...")
   ;; (Thread/sleep 10000)
   (println "Running sketch.")
-  (run-sketch))
+  (run-sketch)
+  (gharp/play-intro))
 
 ;;(run-sketch)
 ;;(qc/sketch-stop grid)

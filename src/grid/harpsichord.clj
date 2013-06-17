@@ -49,5 +49,13 @@
     (play (after 8 metro) notes)
     (play (after 16 metro) notes)))
 
+(defn play-intro
+  []
+  (let [notes melody
+        metro (metronome 120)
+        after (fn [beats metro] (comp metro #(+ % beats)))]
+    (play metro notes)
+    (play (after 4 metro) notes)))
+
 ;(play (metronome 120) melody)
 ;(play-round (metronome 120) melody)

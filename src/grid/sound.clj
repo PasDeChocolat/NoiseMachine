@@ -43,7 +43,7 @@
         left-note (- 60 (int (/ NCOLS 2 col-factor)))
         the-note (int (+ (* (/ 1 col-factor) col) left-note))
         ;;_ (println "the-note:" the-note)
-        duration  (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 1 50)
+        duration  (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 0.5 50)
         ;; duration  (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 100 1)
         ]
     (when (and

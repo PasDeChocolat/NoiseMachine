@@ -60,7 +60,7 @@
                y (+ (* row RH) (rand-int RH))]]
      (swap! grid-sensors #(assoc % [col row]
                                  {:x x :y y
-                                  :burst {:health MAX_SENSOR_BURST_HEALTH
+                                  :burst {:health 0
                                           :drop-y 0}})))))
 
 (defn setup []
