@@ -2,7 +2,7 @@
   (:require [grid.state :as grid-state]
             [quil.core :as qc]
             [bifocals.core :as bifocals])
-  (:use [grid.state :only [grid-sensors grid-state k-col-width k-row-height]]))
+  (:use [grid.state :only [grid-sensors grid-state k-col-width k-row-height note-grid]]))
 
 ;; (def WIDTH 1400.0)
 ;; (def HEIGHT 1000.0)
@@ -61,7 +61,33 @@
      (swap! grid-sensors #(assoc % [col row]
                                  {:x x :y y
                                   :burst {:health 0
-                                          :drop-y 0}})))))
+                                          :drop-y 0}}))))
+
+  ;; Create a note map to grid sectors.
+  ;; lowest 60-24-9 = 27
+  ;; highest 60+36+9 = 105
+
+  (def NOTE_MIN 27)
+  (def NOTE_MAX 105)
+  (def MAX_BURST_LEN 60)
+  (def MIN_BURST_LEN 10)
+
+  (dorun
+   (for [col (range NCOLS)
+         row (range NROWS)
+         :let [col-factor 2
+               left-note (- 60 (int (/ NCOLS 2 col-factor)))
+               the-note (int (+ (* (/ 1 col-factor) col) left-note))
+               played? (= 0 (mod col col-factor))
+               note (cond
+                     (>= 2 row) (- the-note 24)
+                     (>= 5 row) (- the-note 12)
+                     (>= 10 row) the-note
+                     (>= 15 row) (+ the-note 12)
+                     (>= 20 row) (+ the-note 24)
+                     (< 20 row) (+ the-note 36))
+               max-len (qc/map-range note NOTE_MIN NOTE_MAX MAX_BURST_LEN MIN_BURST_LEN)]]
+     (swap! note-grid #(assoc % [col row] {:note note :played? played? :max-len max-len})))))
 
 (defn setup []
   (qc/frame-rate 30)

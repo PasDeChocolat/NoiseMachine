@@ -1,6 +1,6 @@
 (ns grid.sound
   (:use [grid.setup :only [DEPTH_FAR_THRESH DEPTH_START_SECOND_LAYER NCOLS NROWS]]
-        [grid.state :only [at-at-pool long-col-state]]
+        [grid.state :only [at-at-pool long-col-state note-grid]]
         [overtone.live])
   (:require [grid.harpsichord :as gharp]
             [overtone.inst.drum :as drum]
@@ -38,6 +38,20 @@
     (drum/bing :amp amp :freq freq :attack attack :decay decay)))
 
 (defn hit-at-harpsichord
+  [col row depth]
+  (let [duration (qc/map-range depth DEPTH_START_SECOND_LAYER DEPTH_FAR_THRESH 0.5 20)
+        rand-prob (rand)
+        noise-row 22
+        prob? (cond
+               (and (>= (* NROWS 3/4) row) (> 0.37 rand-prob) ) true 
+               (>= noise-row row) true
+               (and (> row noise-row) (> 0.2 rand-prob)) true
+               :else false)        
+        {:keys [note played?]} (@note-grid [col row])]
+    (when (and played? prob?)
+      (gharp/play-single-note-by-int note duration))))
+
+(defn hit-at-harpsichordx
   [col row depth]
   (let [col-factor 2
         left-note (- 60 (int (/ NCOLS 2 col-factor)))

@@ -9,5 +9,6 @@
 (def long-col-state (atom {}))
 (def grid-sensors (atom {}))
 (def all-pixies (atom []))
+(def note-grid (atom {}))
 
 (def at-at-pool (at-at/mk-pool))

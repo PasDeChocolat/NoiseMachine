@@ -2,7 +2,7 @@
   (:require [grid.color-schemes :as color-schemes]
             [quil.core :as qc])
   (:use [grid.setup :only [CW DEPTH_FAR_THRESH DEPTH_START_SECOND_LAYER DEPTH_MAX MAX_SENSOR_BURST_HEALTH NCOLS RH WIDTH]]
-        [grid.state :only [grid-sensors tick]]))
+        [grid.state :only [grid-sensors note-grid tick]]))
 
 (def MAX_SENSOR_DROP 200)
 
@@ -75,7 +75,8 @@
   [x y drop-y col row depth is-on? health]
   (qc/push-matrix)
   (qc/push-style)
-  (let [side (qc/map-range health 0 MAX_SENSOR_BURST_HEALTH 0 40)
+  (let [max-len (:max-len (@note-grid [col row]))
+        side (qc/map-range health 0 MAX_SENSOR_BURST_HEALTH 0 max-len)
         theta (- (* qc/HALF-PI  (qc/noise col row (* 0.2 @tick))) qc/QUARTER-PI)]
     (qc/translate 0 drop-y)
     (qc/rotate theta)
