@@ -28,7 +28,7 @@
 (def CW (/ WIDTH NCOLS))
 (def RH (/ HEIGHT NROWS))
 
-(def DEPTH_FAR_THRESH 4200.0)         ;; Museum setting 2
+(def DEPTH_FAR_THRESH 4000.0)         ;; Museum setting 2
 ;; (def DEPTH_START_SECOND_LAYER 1500.0) ;;
 
 ;;(def DEPTH_FAR_THRESH 4000.0) ;; Kitchen setting
