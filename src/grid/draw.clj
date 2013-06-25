@@ -90,7 +90,7 @@
         ;; eye-y: 967
         ;; zoom-factor: 0.5668403
         
-        ;; eye-x (qc/mouse-x)
+        ;;eye-x (qc/mouse-x)
         eye-x 967.0 ;; museum
         ;;s (Math/sin (* @tick (/ qc/PI 360)))
         ;;eye-x (qc/map-range s -1 1 767 1167)
@@ -100,12 +100,12 @@
         eye-y (/ (qc/height) 2.0)
         eye-z (/ (/ (qc/height) 2.0) (qc/tan (/ (* Math/PI 60.0) 360.0)))
 
-        ;; zoom-factor (qc/map-range (qc/mouse-y) 0 (qc/height) 0 1.0)
-        ;; zoom-factor 0.5668403  ;; museum
-        zoom-factor 0.7
+        ;;zoom-factor (qc/map-range (qc/mouse-y) 0 (qc/height) 0 1.0)
+        zoom-factor 0.59  ;; museum
+        ;; zoom-factor 0.7
         ;; zoom-factor (qc/map-range s -1 1 0.4 0.84)
         ;; zoom-factor 0.83913934 ;; home
-        ;; _ (println "zoom-factor:" zoom-factor)
+        ;;_ (println "zoom-factor:" zoom-factor)
         eye-z (* zoom-factor (* 2.0 eye-z))
         center-x (/ (qc/width) 2.0)
         center-y (/ (qc/height) 2.0)
