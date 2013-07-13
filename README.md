@@ -57,10 +57,10 @@ The setup function in defined in [setup.clj](https://github.com/PasDeChocolat/No
 
 The more interesting bits of state are:
 
-* grid-state - Map keyed by [col row] vector, saving the dectection state of sector of the grid.
-* grid-sensors - Star grid... sort of twinkly.
-* all-pixies - List of all the randomized circles showing up to visualize sound (the circles).
-* note-grid - Map (key: [col row]) containing the "notes" played in each sector of the grid.
+* `grid-state` - Map keyed by [col row] vector, saving the dectection state of sector of the grid.
+* `grid-sensors` - Star grid... sort of twinkly. Also, contains a `:burst` key which retains what the burst looks like for that grid sector.
+* `all-pixies` - List of all the randomized circles showing up to visualize sound (the circles).
+* `note-grid` - Map (key: [col row]) containing the "notes" played in each sector of the grid.
 
 The grid is x,y plane of detection seen by the Kinect. It's state is determined by the distance of an object (if detected) away from the Kinect.
 
@@ -71,8 +71,6 @@ The drawing bits are a bit crazy. There are a few elements layered together. The
 * grid sensors (flickering stars - denote grid and spacing), look at `draw-sensor-grid` in [draw_sensors.clj](https://github.com/PasDeChocolat/NoiseMachine/blob/master/src/grid/draw_sensors.clj).
 * grid bursts (wobbly lines - motion), look at `update-display-sensor-element-at` in [draw_sensors.clj](https://github.com/PasDeChocolat/NoiseMachine/blob/master/src/grid/draw_sensors.clj)
 * pixies (circles), look at `draw-all-pixies` in [pixies.clj](https://github.com/PasDeChocolat/NoiseMachine/blob/master/src/grid/pixies.clj).
-
-For the sensor grid, check out
 
 ## Usage
 
