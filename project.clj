@@ -1,8 +1,8 @@
-(defproject natureofclojure "0.1.0-SNAPSHOT"
-  :description "Grid in Processing/Quil"
+(defproject noisemachine "0.1.0-SNAPSHOT"
+  :description "Noise Machine #1"
   :url "http://github.com/mudphone/"
-  :license {:name "Create Commons Attribution-ShareAlike 2.0 Generic License"
-            :url "http://creativecommons.org/licenses/by-sa/2.0/"}
+  :license {:name "Attribution-ShareAlike 3.0 Unported (CC BY-SA 3.0)"
+            :url "http://creativecommons.org/licenses/by-sa/3.0/"}
   :dependencies [[org.clojure/clojure "1.5.0"]
                  [org.clojure/math.numeric-tower "0.0.2"]
                  [quil "1.6.0"]
