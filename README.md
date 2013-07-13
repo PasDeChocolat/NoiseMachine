@@ -40,8 +40,9 @@ This is what working in Emacs looks like on a wall:
 *Thanks to everyone!*
 
 ## Equipment
-* 1280x1024 projector 
-* vga to hdmi on mac mini adapter and cable
+* digital projector 
+* hdmi cables
+* mac mini
 * Kinect sensor (original model), with included power adapter
 
 ## Usage
