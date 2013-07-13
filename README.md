@@ -1,4 +1,10 @@
-# OBQ = Overtone, Bifocals, Quil
+# Noise Machine #1
+
+Dear Overtone community,
+
+Just wanted to drop a line to say thanks for being such an inspiring and helpful bunch of folks. We were asked to put together a motion sensing musical instrument this summer for the [Honolulu Museum of Art, Spalding House](http://honolulumuseum.org/11981-contemporary_museum_spalding_house)'s exhibition on music. This is the code we created for our Noise Machine #1 installation.
+
+## Ingredients: Overtone, Bifocals, Quil
 
 * [Overtone](http://overtone.github.io): Awesome live coding environment for making sound with SuperCollider.
 * [Bifocals](https://github.com/aperiodic/bifocals): Wrapper for the SimpleOpenNI Kinect library.
@@ -8,9 +14,7 @@ See the [project.clj](https://github.com/PasDeChocolat/OBQExperiment/blob/master
 
 ## Thanks, and what is this?
 
-Just wanted to drop a line to say thanks for being such an inspiring and helpful bunch of folks. We were asked to put together a motion sensing musical instrument this summer for the [Honolulu Museum of Art, Spalding House](http://honolulumuseum.org/11981-contemporary_museum_spalding_house)'s exhibition on music.
-
-The musical parts are done with Overtone, the motion detection via Kinect, and the visuals via Quil/Processing. The installation is placed next to a bonafide, real, wood and metal harpsichord. So, we used that connection to direct our sound generation. We found [Chris Ford](https://twitter.com/ctford)'s harpsichord code on a Gist he put online (https://gist.github.com/ctford/2877443). Big thanks for that and all of his helpful stuff ([Leipzig](https://github.com/ctford/leipzig) and a [talk on Functional Composition](http://www.youtube.com/watch?v=Mfsnlbd-4xQ)).
+The musical parts are done with Overtone, the motion detection via Kinect, and the visuals via Quil/Processing. The installation is placed next to a bonafide, real, wood and metal harpsichord. So, we used that connection to direct our sound generation. We found [Chris Ford](https://twitter.com/ctford)'s harpsichord code on a [Gist he put online](https://gist.github.com/ctford/2877443). Big thanks for that and all of his helpful stuff ([Leipzig](https://github.com/ctford/leipzig) and a [talk on Functional Composition](http://www.youtube.com/watch?v=Mfsnlbd-4xQ)).
 
 Chris Ford mentioned on the [Overtone forum](https://groups.google.com/forum/#!msg/overtone/m_vfRK0gZXA/hSu-6aRwi68J) that the [harpsichord synth](https://github.com/ctford/goldberg/pull/1) that he uses is [Phil Potter](https://twitter.com/philandstuff)'s work.
 
