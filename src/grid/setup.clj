@@ -8,19 +8,21 @@
 ;; (def HEIGHT 1000.0)
 
 ;; 1080p
-;; (def WIDTH 1920.0)
-;; (def HEIGHT 1080.0)
+(def WIDTH 1920.0)
+(def HEIGHT 1080.0)
+(def NCOLS 24)
+(def NROWS 18)
 
 ;; 1920 x 1200 scaled
-(def WIDTH 1920.0)
-(def HEIGHT 1200.0)
+;;(def WIDTH 1920.0)
+;;(def HEIGHT 1200.0)
+;;(def NCOLS 36)
+;;(def NROWS 27)
 
 ;; (def NCOLS 24)
 ;; (def NROWS 18)
 ;; (def NCOLS 48)
 ;; (def NROWS 36)
-(def NCOLS 36)
-(def NROWS 27)
 
 ;; (setup-state)
 

@@ -1,0 +1,21 @@
+Something like this, this was just inspiration:
+http://blog.nelga.com/setup-microsoft-kinect-on-mac-os-x-10-8-mountain-lion/
+http://developkinect.com/resource/mac-os-x/install-openni-nite-and-sensorkinect-mac-os-x
+
+download these things (note, these are the old versions - which you want):
+http://www.openni.org/openni-sdk/openni-sdk-history-2/
+- OpenNI v1.5.4
+- NITE v 1.5.2
+
+download this from here:
+https://github.com/avin2/SensorKinect
+- SensorKinect 1.5.4
+
+after you download and extract these things (above) you have to get rid of the extended attributes (quaratine) flags on files and folders:
+-rw-r--r--@
+See that @ sign?
+
+Do this with this command:
+$ sudo xattr -cr .
+
+If you don't you'll have permission problems after you do the install and you try to run the app.
